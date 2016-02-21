@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Collections.Generic;
 using System.Reflection;
+using System;
 
 namespace Raspkate.Handlers
 {
@@ -56,7 +57,7 @@ namespace Raspkate.Handlers
 
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
-            var fileNameRequested = Path.Combine(this.BasePath, this.requestedFileName.Value.Replace("/", "\\"));
+            var fileNameRequested = Path.Combine(this.BasePath, this.requestedFileName.Value.Replace("/", Path.DirectorySeparatorChar.ToString()));
             log.DebugFormat("File requested: {0}", fileNameRequested);
             if (!File.Exists(fileNameRequested))
             {
