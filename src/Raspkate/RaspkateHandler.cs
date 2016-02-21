@@ -38,6 +38,8 @@ namespace Raspkate
             return (from property in this.properties where property.Key == propertyName select property.Value).FirstOrDefault();
         }
 
+        protected internal virtual void OnRegistering() { }
+
         /// <summary>
         /// Checks if the incoming request can be processed by the current module.
         /// </summary>

@@ -44,12 +44,7 @@
     </configurationElementCollection>
     <configurationElement name="HandlerElement">
       <attributeProperties>
-        <attributeProperty name="Name" isRequired="true" isKey="true" isDefaultCollection="false" xmlName="name" isReadOnly="false">
-          <type>
-            <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
-          </type>
-        </attributeProperty>
-        <attributeProperty name="Type" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="type" isReadOnly="false">
+        <attributeProperty name="Type" isRequired="true" isKey="true" isDefaultCollection="false" xmlName="type" isReadOnly="false">
           <type>
             <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
           </type>

@@ -56,14 +56,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\HandlerElement.cs" />
+    <Compile Include="Config\HandlerElementCollection.cs" />
+    <Compile Include="Config\HandlerPropertyElement.cs" />
+    <Compile Include="Config\HandlerPropertyElementCollection.cs" />
     <Compile Include="Config\RaspkateConfig.csd.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>RaspkateConfig.csd</DependentUpon>
     </Compile>
+    <Compile Include="Config\RaspkateConfiguration.cs" />
+    <Compile Include="Controllers\DefaultRaspkateController.cs" />
+    <Compile Include="Handlers\ControllerHandler.cs" />
+    <Compile Include="Controllers\RaspkateController.cs" />
     <Compile Include="RaspkateHandler.cs" />
     <Compile Include="Handlers\FileHandler.cs" />
     <Compile Include="RaspkateServer.cs" />
+    <Compile Include="Controllers\RouteAttribute.cs" />
+    <Compile Include="Controllers\RoutePrefixAttribute.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

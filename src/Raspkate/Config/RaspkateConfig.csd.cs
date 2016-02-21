@@ -253,7 +253,7 @@ namespace Raspkate.Config
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
         protected override object GetElementKey(global::System.Configuration.ConfigurationElement element)
         {
-            return ((global::Raspkate.Config.HandlerElement)(element)).Name;
+            return ((global::Raspkate.Config.HandlerElement)(element)).Type;
         }
         
         /// <summary>
@@ -286,13 +286,13 @@ namespace Raspkate.Config
         /// <summary>
         /// Gets the <see cref="global::Raspkate.Config.HandlerElement"/> with the specified key.
         /// </summary>
-        /// <param name="name">The key of the <see cref="global::Raspkate.Config.HandlerElement"/> to retrieve.</param>
+        /// <param name="type">The key of the <see cref="global::Raspkate.Config.HandlerElement"/> to retrieve.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        public global::Raspkate.Config.HandlerElement this[object name]
+        public global::Raspkate.Config.HandlerElement this[object type]
         {
             get
             {
-                return ((global::Raspkate.Config.HandlerElement)(base.BaseGet(name)));
+                return ((global::Raspkate.Config.HandlerElement)(base.BaseGet(type)));
             }
         }
         #endregion
@@ -335,11 +335,11 @@ namespace Raspkate.Config
         /// <summary>
         /// Gets the <see cref="global::Raspkate.Config.HandlerElement"/> with the specified key.
         /// </summary>
-        /// <param name="name">The key of the <see cref="global::Raspkate.Config.HandlerElement"/> to retrieve.</param>
+        /// <param name="type">The key of the <see cref="global::Raspkate.Config.HandlerElement"/> to retrieve.</param>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        public global::Raspkate.Config.HandlerElement GetItemByKey(string name)
+        public global::Raspkate.Config.HandlerElement GetItemByKey(string type)
         {
-            return ((global::Raspkate.Config.HandlerElement)(base.BaseGet(((object)(name)))));
+            return ((global::Raspkate.Config.HandlerElement)(base.BaseGet(((object)(type)))));
         }
         #endregion
         
@@ -376,32 +376,6 @@ namespace Raspkate.Config
         }
         #endregion
         
-        #region Name Property
-        /// <summary>
-        /// The XML name of the <see cref="Name"/> property.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        internal const string NamePropertyName = "name";
-        
-        /// <summary>
-        /// Gets or sets the Name.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        [global::System.ComponentModel.DescriptionAttribute("The Name.")]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::Raspkate.Config.HandlerElement.NamePropertyName, IsRequired=true, IsKey=true, IsDefaultCollection=false)]
-        public virtual string Name
-        {
-            get
-            {
-                return ((string)(base[global::Raspkate.Config.HandlerElement.NamePropertyName]));
-            }
-            set
-            {
-                base[global::Raspkate.Config.HandlerElement.NamePropertyName] = value;
-            }
-        }
-        #endregion
-        
         #region Type Property
         /// <summary>
         /// The XML name of the <see cref="Type"/> property.
@@ -414,7 +388,7 @@ namespace Raspkate.Config
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
         [global::System.ComponentModel.DescriptionAttribute("The Type.")]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::Raspkate.Config.HandlerElement.TypePropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::Raspkate.Config.HandlerElement.TypePropertyName, IsRequired=true, IsKey=true, IsDefaultCollection=false)]
         public virtual string Type
         {
             get

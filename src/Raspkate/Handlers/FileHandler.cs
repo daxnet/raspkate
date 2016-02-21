@@ -8,13 +8,15 @@ using System.Reflection;
 
 namespace Raspkate.Handlers
 {
-    public sealed class FileHandler : RaspkateHandler
+    internal sealed class FileHandler : RaspkateHandler
     {
-        private const string Pattern =
+        internal const string Pattern =
             @"^(?<fileName>/?(\w(\w|\-|\s)*/)*(\w|\-)+(\.(\w|\-)+)*\.\w+)(\?(?<queryString>\w+=(\w|\-)+(&\w+=(\w|\-)+)*))?$";
 
         private readonly Regex regularExpression = new Regex(Pattern);
         private readonly ThreadLocal<string> requestedFileName = new ThreadLocal<string>(() => string.Empty);
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public FileHandler(RaspkateServer server, IEnumerable<KeyValuePair<string, string>> properties)
             : base(server, properties)
@@ -55,6 +57,7 @@ namespace Raspkate.Handlers
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
             var fileNameRequested = Path.Combine(this.BasePath, this.requestedFileName.Value.Replace("/", "\\"));
+            log.DebugFormat("File requested: {0}", fileNameRequested);
             if (!File.Exists(fileNameRequested))
             {
                 response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -63,7 +66,7 @@ namespace Raspkate.Handlers
             {
                 var fileBytes = File.ReadAllBytes(fileNameRequested);
                 response.StatusCode = 200;
-                response.ContentType = GetContentType(fileNameRequested);
+                response.ContentType = Utils.GetMimeType(Path.GetExtension(fileNameRequested));
                 response.ContentLength64 = fileBytes.LongLength;
                 response.OutputStream.Write(fileBytes, 0, fileBytes.Length);
             }
@@ -80,28 +83,5 @@ namespace Raspkate.Handlers
                 return this.Server.Configuration.BasePath;
             }
         }
-
-        private static string GetContentType(string fileName)
-        {
-            //var extension = Path.GetExtension(fileName);
-
-            //if (String.IsNullOrWhiteSpace(extension))
-            //{
-            //    return null;
-            //}
-
-            //var registryKey = Registry.ClassesRoot.OpenSubKey(extension);
-
-            //if (registryKey == null)
-            //{
-            //    return null;
-            //}
-
-            //var value = registryKey.GetValue("Content Type") as string;
-
-            //return String.IsNullOrWhiteSpace(value) ? null : value;
-            return "text/html";
-        }
-
     }
 }

@@ -23,8 +23,7 @@ namespace Raspkate
         public RaspkateServer(RaspkateConfiguration configuration)
         {
             this.configuration = configuration;
-            this.RegisterPrefixes(new[] { configuration.Prefix });
-            this.RegisterHandlers(configuration);
+            
         }
 
         public IEnumerable<RaspkateHandler> HttpHandlers
@@ -37,31 +36,33 @@ namespace Raspkate
             get { return this.configuration; }
         }
 
-        public void RegisterHandler<T>()
-            where T : RaspkateHandler
-        {
-            this.httpHandlers.Add((RaspkateHandler) Activator.CreateInstance(typeof (T), this));
-        }
-
-        public void RegisterHandler(RaspkateHandler handler)
-        {
-            this.httpHandlers.Add(handler);
-        }
-
         public void Start()
         {
+            log.Info(string.Format("Starting Raspkate service with the configuration:{0}{1}", Environment.NewLine, this.configuration));
+            this.RegisterPrefixes(new[] { configuration.Prefix });
+            this.RegisterHandlers(configuration);
+            log.Debug("Starting HttpListener based on configuration.");
             this.listener.Start();
+            log.Debug("HttpListener started successfully.");
+            log.Debug("Starting service thread.");
             this.thread = new Thread(this.ExecuteThread);
             this.thread.Start(this.listener);
+            log.DebugFormat("Service thread started successfully, ManagedThreadId={0}", this.thread.ManagedThreadId);
             log.Info("Service started.");
         }
 
         public void Stop()
         {
+            log.Debug("Sending the STOP signal.");
             this.cancelled = true;
             this.stopEvent.Set();
+            log.Debug("Waiting for service thread.");
             this.thread.Join();
+            log.Debug("Service thread stopped successfully.");
+            log.Debug("Stopping HttpListener.");
             this.listener.Stop();
+            log.Debug("HttpListener stopped successfully.");
+            log.Info("Raspkate service stopped successfully.");
         }
 
         private void RegisterHandlers(RaspkateConfiguration config)
@@ -72,7 +73,7 @@ namespace Raspkate
                 if (handlerType == null ||
                     !handlerType.IsSubclassOf(typeof(RaspkateHandler)))
                 {
-                    // TODO: Write warn log
+                    log.WarnFormat("Cannot load CLR type from name \"{0}\", skipping...", handlerElement.Type);
                     continue;
                 }
 
@@ -86,7 +87,16 @@ namespace Raspkate
                 }
 
                 var handler = (RaspkateHandler)Activator.CreateInstance(handlerType, this, properties);
-                this.RegisterHandler(handler);
+                if (handler != null)
+                {
+                    handler.OnRegistering();
+                    this.httpHandlers.Add(handler);
+                    log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
+                }
+                else
+                {
+                    log.WarnFormat("Register handler \"{0}\" failed, skipping...", handlerElement.Type);
+                }
             }
         }
 
@@ -126,6 +136,10 @@ namespace Raspkate
                         handled = true;
                         break;
                     }
+                    else
+                    {
+                        log.DebugFormat("Handler \"{0}\" cannot handle the request with URL \"{1}\", skipped.", handler, context.Request.Url);
+                    }
                 }
 
                 if (!handled)
@@ -135,6 +149,7 @@ namespace Raspkate
             }
             catch (Exception ex)
             {
+                log.Error("Exception occurred.", ex);
                 this.WriteResponse(context.Response, ex);
             }
             finally
