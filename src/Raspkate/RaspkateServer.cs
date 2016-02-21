@@ -118,43 +118,58 @@ namespace Raspkate
             if (this.thread.IsAlive)
             {
                 var httpListener = (HttpListener)result.AsyncState;
+                IAsyncResult _result = httpListener.BeginGetContext(new AsyncCallback(OnGetContext), httpListener);
                 var context = httpListener.EndGetContext(result);
-                this.ProcessRequest(context);
+                try
+                {
+                    this.ProcessRequest(context);
+                }
+                catch(HttpListenerException ex)
+                {
+                    log.DebugFormat("HttpListener raised exception. Written to log for debugging reference.", ex);
+                }
+                catch(Exception ex)
+                {
+                    log.Error("Exception occurred.", ex);
+                }
+                finally
+                {
+                    try
+                    {
+                        context.Response.OutputStream.Flush();
+                        context.Response.OutputStream.Close();
+                        context.Response.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error("Cannot flush and close the response stream.", ex);
+                    }
+                    finally
+                    { }
+                }
             }
         }
 
         private void ProcessRequest(HttpListenerContext context)
         {
-            try
+            var handled = false;
+            foreach (var handler in this.httpHandlers)
             {
-                var handled = false;
-                foreach (var handler in this.httpHandlers)
+                if (handler.ShouldHandle(context.Request))
                 {
-                    if (handler.ShouldHandle(context.Request))
-                    {
-                        handler.Process(context.Request, context.Response);
-                        handled = true;
-                        break;
-                    }
-                    else
-                    {
-                        log.DebugFormat("Handler \"{0}\" cannot handle the request with URL \"{1}\", skipped.", handler, context.Request.Url);
-                    }
+                    handler.Process(context.Request, context.Response);
+                    handled = true;
+                    break;
                 }
+                else
+                {
+                    log.DebugFormat("Handler \"{0}\" cannot handle the request with URL \"{1}\", skipped.", handler, context.Request.Url);
+                }
+            }
 
-                if (!handled)
-                {
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                }
-            }
-            catch (Exception ex)
+            if (!handled)
             {
-                log.Error("Exception occurred.", ex);
-                this.WriteResponse(context.Response, ex);
-            }
-            finally
-            {
-                context.Response.Close();
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             }
         }
 
