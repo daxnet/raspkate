@@ -105,9 +105,12 @@ namespace Raspkate
 
         private void OnGetContext(IAsyncResult result)
         {
-            var httpListener = (HttpListener)result.AsyncState;
-            var context = httpListener.EndGetContext(result);
-            this.ProcessRequest(context);
+            if (this.thread.IsAlive)
+            {
+                var httpListener = (HttpListener)result.AsyncState;
+                var context = httpListener.EndGetContext(result);
+                this.ProcessRequest(context);
+            }
         }
 
         private void ProcessRequest(HttpListenerContext context)
