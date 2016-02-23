@@ -7,17 +7,12 @@ using System.Threading.Tasks;
 
 namespace Raspkate.Controllers.Routing
 {
-    /// <summary>
-    /// Represents a particular component is a route string.
-    /// </summary>
-    internal abstract class RouteComponent
+    [RouteItem(@"^(?<name>\w+)$")]
+    internal sealed class LiteralRouteItem : RouteItem
     {
-        public const string NameGroup = "name";
-
-        public virtual bool IsMatch(string src)
+        public override bool Prepare(string itemTemplate)
         {
-            var regex = new Regex(this.MatchingExpression);
-            var match = regex.Match(src);
+            var match = this.Attribute.MatchItemTemplate(itemTemplate);
             if (match.Success && match.Groups[NameGroup] != null)
             {
                 this.Name = match.Groups[NameGroup].Value;
@@ -28,9 +23,5 @@ namespace Raspkate.Controllers.Routing
             }
             return false;
         }
-
-        public string Name { get; protected set; }
-
-        protected abstract string MatchingExpression { get; }
     }
 }

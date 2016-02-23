@@ -67,12 +67,18 @@
     </Compile>
     <Compile Include="Config\RaspkateConfiguration.cs" />
     <Compile Include="Controllers\DefaultRaspkateController.cs" />
-    <Compile Include="Controllers\Routing\LiteralRouteComponent.cs" />
-    <Compile Include="Controllers\Routing\ParameterRouteComponent.cs" />
+    <Compile Include="Controllers\HttpGetAttribute.cs" />
+    <Compile Include="Controllers\HttpMethodAttribute.cs" />
+    <Compile Include="Controllers\Routing\LiteralRouteItem.cs" />
+    <Compile Include="Controllers\Routing\ParameterRouteItem.cs" />
     <Compile Include="Controllers\Routing\Route.cs" />
-    <Compile Include="Controllers\Routing\RouteComponent.cs" />
+    <Compile Include="Controllers\Routing\RouteItem.cs" />
+    <Compile Include="Controllers\Routing\RouteItemAttribute.cs" />
+    <Compile Include="Controllers\Routing\RouteParser.cs" />
+    <Compile Include="Controllers\Routing\RouteValueCollection.cs" />
     <Compile Include="Handlers\ControllerHandler.cs" />
     <Compile Include="Controllers\RaspkateController.cs" />
+    <Compile Include="Handlers\ControllerRegistration.cs" />
     <Compile Include="RaspkateHandler.cs" />
     <Compile Include="Handlers\FileHandler.cs" />
     <Compile Include="RaspkateServer.cs" />

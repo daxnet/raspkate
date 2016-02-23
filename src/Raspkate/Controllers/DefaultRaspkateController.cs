@@ -8,6 +8,14 @@ namespace Raspkate.Controllers
 {
     public class DefaultRaspkateController : RaspkateController
     {
+        public DefaultRaspkateController()
+        { }
 
+        [HttpGet]
+        [Route("services/machinename")]
+        public string GetMachineName()
+        {
+            return Environment.MachineName;
+        }
     }
 }

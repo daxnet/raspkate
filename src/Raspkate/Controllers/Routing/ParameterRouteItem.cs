@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Raspkate.Controllers.Routing
 {
-    internal sealed class ParameterRouteComponent : RouteComponent
+    [RouteItem(@"^{(?<name>\w+)(:(?<type>\w+)(:(?<constraint>.+))?)?}$")]
+    internal sealed class ParameterRouteItem : RouteItem
     {
         public const string TypeGroup = "type";
         public const string ConstraintGroup = "constraint";
 
-        public override bool IsMatch(string src)
+        public override bool Prepare(string itemTemplate)
         {
-            var regex = new Regex(this.MatchingExpression);
-            var match = regex.Match(src);
+            var match = this.Attribute.MatchItemTemplate(itemTemplate);
             if (match.Success && match.Groups[NameGroup] != null)
             {
                 this.Name = match.Groups[NameGroup].Value;
@@ -28,17 +28,31 @@ namespace Raspkate.Controllers.Routing
                 {
                     this.ParameterType = NameToType(parameterTypeName);
                 }
+                else
+                {
+                    this.ParameterType = typeof(object);
+                }
 
+                return true;
             }
             return false;
         }
 
-        public Type ParameterType { get; private set; }
-
-        protected override string MatchingExpression
+        public object GetValue(string input)
         {
-            get { return @"^{(?<name>\w+)(:(?<type>\w+)(:(?<constraint>.+))?)?}$"; }
+            try
+            {
+                if (this.ParameterType != null)
+                    return Convert.ChangeType(input, this.ParameterType);
+            }
+            catch
+            {
+                
+            }
+            return null;
         }
+
+        public Type ParameterType { get; private set; }
 
         private static Type NameToType(string name)
         {
@@ -59,10 +73,8 @@ namespace Raspkate.Controllers.Routing
                     return typeof(float);
                 case "guid":
                     return typeof(Guid);
-                case "string":
-                    return typeof(string);
                 default:
-                    return null;
+                    return typeof(string);
             }
         }
     }

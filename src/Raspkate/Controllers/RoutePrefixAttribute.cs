@@ -9,11 +9,11 @@ namespace Raspkate.Controllers
     [AttributeUsage(AttributeTargets.Class)]
     public class RoutePrefixAttribute : Attribute
     {
-        public RoutePrefixAttribute(string name)
+        public RoutePrefixAttribute(string prefix)
         {
-            this.Name = name;
+            this.Prefix = prefix;
         }
 
-        public string Name { get; private set; }
+        public string Prefix { get; private set; }
     }
 }
