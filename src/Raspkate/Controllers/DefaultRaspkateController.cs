@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Raspkate.Controllers
 {
+    [RoutePrefix("api")]
     public class DefaultRaspkateController : RaspkateController
     {
         public DefaultRaspkateController()

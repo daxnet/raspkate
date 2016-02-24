@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace Raspkate.Controllers
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class HttpGetAttribute : HttpMethodAttribute
+    public class HttpPostAttribute : HttpMethodAttribute
     {
-        public HttpGetAttribute()
-            : base("GET")
+        public HttpPostAttribute()
+            : base("POST")
         { }
     }
 }

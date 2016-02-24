@@ -66,10 +66,8 @@ namespace Raspkate.Handlers
             else
             {
                 var fileBytes = File.ReadAllBytes(fileNameRequested);
-                response.StatusCode = 200;
-                response.ContentType = Utils.GetMimeType(Path.GetExtension(fileNameRequested));
-                response.ContentLength64 = fileBytes.LongLength;
-                response.OutputStream.Write(fileBytes, 0, fileBytes.Length);
+                var contentType = Utils.GetMimeType(Path.GetExtension(fileNameRequested));
+                response.WriteResponse(HttpStatusCode.OK, contentType, fileBytes);
             }
         }
 

@@ -9,5 +9,11 @@ namespace Raspkate.Controllers
     [AttributeUsage(AttributeTargets.Method, Inherited=true)]
     public abstract class HttpMethodAttribute : Attribute
     {
+        protected HttpMethodAttribute(string methodName)
+        {
+            this.MethodName = methodName;
+        }
+
+        public string MethodName { get; private set; }
     }
 }

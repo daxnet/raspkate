@@ -1,4 +1,5 @@
-﻿using Raspkate.Controllers;
+﻿using Newtonsoft.Json;
+using Raspkate.Controllers;
 using Raspkate.Controllers.Routing;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,10 @@ namespace Raspkate.Handlers
             : base(server, properties)
         { }
 
-
         protected internal override void OnRegistering()
         {
             var controllerTypeNames = GetPropertyValue("Controllers").Split(';').Select(p => p.Trim());
-            foreach(var controllerTypeName in controllerTypeNames)
+            foreach (var controllerTypeName in controllerTypeNames)
             {
                 var controllerType = Type.GetType(controllerTypeName);
                 if (controllerType == null)
@@ -45,18 +45,93 @@ namespace Raspkate.Handlers
 
         public override bool ShouldHandle(HttpListenerRequest request)
         {
-            return request.RawUrl != "/" && 
+            return request.RawUrl != "/" &&
                 !this.fileNameRegularExpression.Match(request.RawUrl.Trim('\\', '/', '?')).Success;
         }
 
         public override void Process(HttpListenerRequest request, HttpListenerResponse response)
         {
-            response.StatusCode = 200;
-            response.ContentType = "text/html";
-            response.ContentEncoding = Encoding.UTF8;
-            var bytes = Encoding.UTF8.GetBytes("<h1>Controller Handled</h1>");
-            response.ContentLength64 = bytes.Length;
-            response.OutputStream.Write(bytes, 0, bytes.Length);
+            try
+            {
+                var requestedUri = request.RawUrl.Trim('/');
+                foreach(var controllerRegistration in this.controllerRegistrations)
+                {
+                    // Checks the HTTP method.
+                    var httpMethodName = controllerRegistration.ControllerMethod.GetCustomAttribute<HttpGetAttribute>().MethodName;
+                    if (request.HttpMethod != httpMethodName)
+                    {
+                        continue;
+                    }
+
+                    // Checks if the current controller registration matches the requested route.
+                    RouteValueCollection values;
+                    if (controllerRegistration.Route.TryGetValue(requestedUri, out values))
+                    {
+                        // If successfully get the route values, then bind the parameter.
+                        List<object> parameterValues = new List<object>();
+                        foreach(var parameter in controllerRegistration.ControllerMethod.GetParameters())
+                        {
+                            if (parameter.IsDefined(typeof(FromBodyAttribute)))
+                            {
+                                if (controllerRegistration.ControllerMethod.IsDefined(typeof(HttpGetAttribute)))
+                                {
+                                    throw new ControllerException("Parameter \"{0}\" of method {1}.{2} has the FromBodyAttribute defined, which is not allowed in an HTTP GET method.", parameter.Name, controllerRegistration.ControllerType.Name, controllerRegistration.ControllerMethod.Name);
+                                }
+                                else if (controllerRegistration.ControllerMethod.IsDefined(typeof(HttpPostAttribute)))
+                                {
+                                    var bodyContent = string.Empty;
+                                    if (request.ContentLength64 > 0)
+                                    {
+                                        var bytes = new byte[request.ContentLength64];
+                                        request.InputStream.Read(bytes, 0, (int)request.ContentLength64);
+                                        bodyContent = request.ContentEncoding.GetString(bytes);
+                                    }
+                                    parameterValues.Add(JsonConvert.DeserializeObject(bodyContent));
+                                }
+                            }
+
+                            if (values.ContainsKey(parameter.Name))
+                            {
+                                parameterValues.Add(values[parameter.Name]);
+                            }
+                            else
+                            {
+                                throw new ControllerException("Parameter binding failed: Unrecognized parameter \"{0}\" defined in the controller method {1}.{2}.", 
+                                    parameter.Name, 
+                                    controllerRegistration.ControllerType.Name, 
+                                    controllerRegistration.ControllerMethod.Name);
+                            }
+                        }
+
+                        // Call the controller method
+                        var controller = (RaspkateController)Activator.CreateInstance(controllerRegistration.ControllerType);
+                        if (controller != null)
+                        {
+                            if (controllerRegistration.ControllerMethod.ReturnType == typeof(void))
+                            {
+                                controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray());
+                                response.StatusCode = (int)HttpStatusCode.OK;
+                            }
+                            else
+                            {
+                                var responseString = JsonConvert.SerializeObject(controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray()));
+                                response.WriteResponse(HttpStatusCode.OK, "application/json", responseString);
+                            }
+                        }
+                    }
+                }
+                throw new ControllerException("No registered controller can handle the request with route \"{0}\".", requestedUri);
+            }
+            catch (ControllerException ex)
+            {
+                log.Warn("Unable to proceed with the given request.", ex);
+                response.WriteResponse(HttpStatusCode.BadRequest, ex);
+            }
+            catch(Exception ex)
+            {
+                log.Error("Error occurred when processing the request.", ex);
+                response.WriteResponse(HttpStatusCode.InternalServerError, ex);
+            }
         }
 
         private void RegisterControllerType(Type controllerType)
@@ -74,9 +149,10 @@ namespace Raspkate.Handlers
                                   Route = m.IsDefined(typeof(RouteAttribute)) ? m.GetCustomAttribute<RouteAttribute>().Name : m.Name,
                                   MethodInfo = m
                               };
-            foreach(var methodQueryItem in methodQuery)
+            foreach (var methodQueryItem in methodQuery)
             {
                 string routeString = string.Empty;
+                Route route;
                 if (methodQueryItem.Route.StartsWith("!"))
                 {
                     routeString = methodQueryItem.Route.Substring(1);
@@ -88,7 +164,20 @@ namespace Raspkate.Handlers
                         routeString += "/";
                     routeString += methodQueryItem.Route;
                 }
-                var route = RouteParser.Parse(routeString);
+                try
+                {
+                    route = RouteParser.Parse(routeString);
+                }
+                catch (RouteParseException rpe)
+                {
+                    log.Warn(string.Format("Route parsing failed, ignoring the decorated controller method. (Route: \"{0}\", Method:{1}.{2})", 
+                        routeString, 
+                        controllerType.Name, 
+                        methodQueryItem.MethodInfo.Name), rpe);
+
+                    continue;
+                }
+
                 this.controllerRegistrations.Add(new ControllerRegistration
                     {
                         ControllerMethod = methodQueryItem.MethodInfo,
@@ -96,6 +185,7 @@ namespace Raspkate.Handlers
                         Route = route,
                         RouteTemplate = routeString
                     });
+
                 log.DebugFormat("Route \"{0}\" registered for controller method {1}.{2}.", routeString, controllerType.Name, methodQueryItem.MethodInfo.Name);
             }
         }

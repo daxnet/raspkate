@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Raspkate
 {
-    public class Utils
+    internal static class Utils
     {
         private static IDictionary<string, string> _mappings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) 
         {
@@ -577,7 +579,7 @@ namespace Raspkate
 
         };
 
-        public static string GetMimeType(string extension)
+        internal static string GetMimeType(string extension)
         {
             if (extension == null)
             {
@@ -594,5 +596,29 @@ namespace Raspkate
             return _mappings.TryGetValue(extension, out mime) ? mime : "application/octet-stream";
         }
 
+        internal static void WriteResponse(this HttpListenerResponse response, HttpStatusCode code, Exception exception)
+        {
+            response.WriteResponse(code, "text/plain", exception.ToString());
+        }
+
+        internal static void WriteResponse(this HttpListenerResponse response, HttpStatusCode code, string contentType, string content, Encoding encoding = null)
+        {
+            if (encoding == null)
+            {
+                encoding = Encoding.UTF8;
+            }
+
+            var bytes = encoding.GetBytes(content);
+            response.ContentEncoding = encoding;
+            response.WriteResponse(code, contentType, bytes);
+        }
+
+        internal static void WriteResponse(this HttpListenerResponse response, HttpStatusCode code, string contentType, byte[] bytes)
+        {
+            response.ContentLength64 = bytes.LongLength;
+            response.StatusCode = (int)code;
+            response.ContentType = contentType;
+            response.OutputStream.Write(bytes, 0, bytes.Length);
+        }
     }
 }
