@@ -5,11 +5,39 @@
     <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" />
     <script src="js/jquery-1.11.3.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: 'http://127.0.0.1:9023/api/server/info',
+                type: 'GET',
+                crossDomain: true,
+                dataType: 'jsonp',
+                success: function (data) {
+                    //var jsonStr = JSON.stringify(data);
+                    //alert(data);
+                }
+            });
+        });
+
+    </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Raspkate</h1>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a href="#" class="navbar-brand">Raspkate</a>
+            </div>
+        </div>
     </div>
-    
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Congratulations!</h1>
+            <p>You have successfully setup the Raspkate service on your device.</p>
+            <p>
+                <a href="https://github.com/daxnet/raspkate" target="_blank" class="btn btn-primary btn-lg" role="button">Learn More...</a>
+            </p>
+        </div>
+    </div>
+
 </body>
 </html>

@@ -54,12 +54,18 @@ namespace Raspkate.Handlers
             try
             {
                 var requestedUri = request.RawUrl.Trim('/');
+                if (requestedUri.Contains('?'))
+                {
+                    requestedUri = requestedUri.Substring(0, requestedUri.IndexOf('?'));
+                }
                 foreach(var controllerRegistration in this.controllerRegistrations)
                 {
                     // Checks the HTTP method.
-                    var httpMethodName = controllerRegistration.ControllerMethod.GetCustomAttribute<HttpGetAttribute>().MethodName;
+                    var httpMethodName = controllerRegistration.ControllerMethod.GetCustomAttribute<HttpMethodAttribute>().MethodName;
                     if (request.HttpMethod != httpMethodName)
                     {
+                        log.DebugFormat("The HTTP method in the request \"{0}\" is different from the one defined on the controller method (Requested {1} but {2}).", 
+                            requestedUri, request.HttpMethod, httpMethodName);
                         continue;
                     }
 
@@ -73,11 +79,7 @@ namespace Raspkate.Handlers
                         {
                             if (parameter.IsDefined(typeof(FromBodyAttribute)))
                             {
-                                if (controllerRegistration.ControllerMethod.IsDefined(typeof(HttpGetAttribute)))
-                                {
-                                    throw new ControllerException("Parameter \"{0}\" of method {1}.{2} has the FromBodyAttribute defined, which is not allowed in an HTTP GET method.", parameter.Name, controllerRegistration.ControllerType.Name, controllerRegistration.ControllerMethod.Name);
-                                }
-                                else if (controllerRegistration.ControllerMethod.IsDefined(typeof(HttpPostAttribute)))
+                                if (controllerRegistration.ControllerMethod.IsDefined(typeof(HttpPostAttribute)))
                                 {
                                     var bodyContent = string.Empty;
                                     if (request.ContentLength64 > 0)
@@ -87,6 +89,10 @@ namespace Raspkate.Handlers
                                         bodyContent = request.ContentEncoding.GetString(bytes);
                                     }
                                     parameterValues.Add(JsonConvert.DeserializeObject(bodyContent));
+                                }
+                                else
+                                {
+                                    throw new ControllerException("Parameter \"{0}\" of method {1}.{2} has the FromBodyAttribute defined, which is not allowed in an HTTP GET method.", parameter.Name, controllerRegistration.ControllerType.Name, controllerRegistration.ControllerMethod.Name);
                                 }
                             }
 
@@ -117,6 +123,7 @@ namespace Raspkate.Handlers
                                 var responseString = JsonConvert.SerializeObject(controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray()));
                                 response.WriteResponse(HttpStatusCode.OK, "application/json", responseString);
                             }
+                            return;
                         }
                     }
                 }

@@ -13,10 +13,18 @@ namespace Raspkate.Controllers
         { }
 
         [HttpGet]
-        [Route("services/machinename")]
-        public string GetMachineName()
+        [Route("server/info")]
+        public dynamic GetServerInfo()
         {
-            return Environment.MachineName;
+            return new
+            {
+                Environment.MachineName,
+                Environment.Is64BitOperatingSystem,
+                Environment.OSVersion.Platform,
+                Environment.OSVersion.VersionString,
+                Environment.OSVersion.ServicePack,
+                Environment.ProcessorCount
+            };
         }
     }
 }
