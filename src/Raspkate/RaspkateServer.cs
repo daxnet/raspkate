@@ -118,7 +118,7 @@ namespace Raspkate
             if (this.thread.IsAlive)
             {
                 var httpListener = (HttpListener)result.AsyncState;
-                IAsyncResult _result = httpListener.BeginGetContext(new AsyncCallback(OnGetContext), httpListener);
+                httpListener.BeginGetContext(new AsyncCallback(OnGetContext), httpListener);
                 var context = httpListener.EndGetContext(result);
                 try
                 {

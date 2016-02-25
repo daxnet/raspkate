@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0DDC80C4-BA96-4773-8D89-FC8D2C2048E6}"
 	ProjectSection(SolutionItems) = preProject
 		build.bat = build.bat
+		build.sh = build.sh
 	EndProjectSection
 EndProject
 Global
