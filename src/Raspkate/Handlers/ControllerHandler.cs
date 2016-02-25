@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace Raspkate.Handlers
 {
+    /// <summary>
+    /// Represents the handler that can handle RESTful API request and process the request by registered controllers.
+    /// </summary>
     internal sealed class ControllerHandler : RaspkateHandler
     {
         private readonly Regex fileNameRegularExpression = new Regex(FileHandler.Pattern);

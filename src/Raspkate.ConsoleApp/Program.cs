@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using Raspkate.Handlers;
 using Raspkate.Config;
 using System.Configuration;

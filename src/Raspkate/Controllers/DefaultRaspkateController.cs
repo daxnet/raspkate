@@ -20,13 +20,13 @@ namespace Raspkate.Controllers
             {
                 Environment.MachineName,
                 Environment.Is64BitOperatingSystem,
-                Environment.OSVersion.Platform,
-                Environment.OSVersion.VersionString,
-                Environment.OSVersion.ServicePack,
+                OSVersion = Environment.OSVersion.VersionString,
+                OSPlatform = Enum.GetName(typeof(PlatformID), Environment.OSVersion.Platform),
+                OSServicePack = Environment.OSVersion.ServicePack,
                 Environment.ProcessorCount,
                 Environment.SystemDirectory,
                 Environment.SystemPageSize,
-                Version = Environment.Version.ToString(),
+                FrameworkVersion = Environment.Version.ToString(),
                 Environment.CurrentManagedThreadId
             };
         }
