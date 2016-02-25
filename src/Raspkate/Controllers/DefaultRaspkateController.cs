@@ -23,7 +23,11 @@ namespace Raspkate.Controllers
                 Environment.OSVersion.Platform,
                 Environment.OSVersion.VersionString,
                 Environment.OSVersion.ServicePack,
-                Environment.ProcessorCount
+                Environment.ProcessorCount,
+                Environment.SystemDirectory,
+                Environment.SystemPageSize,
+                Version = Environment.Version.ToString(),
+                Environment.CurrentManagedThreadId
             };
         }
     }

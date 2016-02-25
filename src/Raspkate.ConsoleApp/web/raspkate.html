@@ -8,13 +8,13 @@
     <script>
         $(document).ready(function () {
             $.ajax({
-                url: 'http://127.0.0.1:9023/api/server/info',
+                url: 'api/server/info',
                 type: 'GET',
-                crossDomain: true,
-                dataType: 'jsonp',
                 success: function (data) {
-                    //var jsonStr = JSON.stringify(data);
-                    //alert(data);
+                    $.each(data, function (name, value) {
+                        var html = '<tr><td>' + name + '</td><td>' + value + '</td></tr>';
+                        $('#svrInfoList tr:last').after(html);
+                    });
                 }
             });
         });
@@ -38,6 +38,25 @@
             </p>
         </div>
     </div>
-
+    <div class="container">
+        <h1>
+            Server Information
+        </h1>
+        <div class="table-responsive">
+            <table id="svrInfoList" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <footer>
+        <hr />
+        <p class="text-center text-muted">Copyright &copy; 2016 daxnet.me.</p>
+    </footer>
 </body>
 </html>
