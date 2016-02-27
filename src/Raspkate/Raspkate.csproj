@@ -46,6 +46,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Raspberry.IO">
+      <HintPath>..\..\lib\Raspberry.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="Raspberry.IO.GeneralPurpose">
+      <HintPath>..\..\lib\Raspberry.IO.GeneralPurpose.dll</HintPath>
+    </Reference>
+    <Reference Include="Raspberry.IO.Interop">
+      <HintPath>..\..\lib\Raspberry.IO.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="Raspberry.System">
+      <HintPath>..\..\lib\Raspberry.System.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -80,6 +92,7 @@
     <Compile Include="Controllers\Routing\RouteParseException.cs" />
     <Compile Include="Controllers\Routing\RouteParser.cs" />
     <Compile Include="Controllers\Routing\RouteValueCollection.cs" />
+    <Compile Include="Controllers\SynchronizedAttribute.cs" />
     <Compile Include="Handlers\ControllerHandler.cs" />
     <Compile Include="Controllers\RaspkateController.cs" />
     <Compile Include="Handlers\ControllerRegistration.cs" />

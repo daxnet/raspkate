@@ -7,10 +7,13 @@ using System.Threading.Tasks;
 namespace Raspkate.Controllers
 {
     [RoutePrefix("api")]
+    [Synchronized]
     public class DefaultRaspkateController : RaspkateController
     {
         public DefaultRaspkateController()
-        { }
+        {
+
+        }
 
         [HttpGet]
         [Route("server/info")]
@@ -27,8 +30,12 @@ namespace Raspkate.Controllers
                 Environment.SystemDirectory,
                 Environment.SystemPageSize,
                 FrameworkVersion = Environment.Version.ToString(),
-                Environment.CurrentManagedThreadId
+                IsRaspberryPiDevice = Raspberry.Board.Current.IsRaspberryPi,
+                RaspberryPiModel = Raspberry.Board.Current.IsRaspberryPi ? Raspberry.Board.Current.Model.ToString() : "N/A",
+                RaspberryPiProcessorName = Raspberry.Board.Current.IsRaspberryPi ? Raspberry.Board.Current.ProcessorName : "N/A",
+                RaspberryPiSerialNumber = Raspberry.Board.Current.IsRaspberryPi ? Raspberry.Board.Current.SerialNumber : "N/A"
             };
         }
+
     }
 }

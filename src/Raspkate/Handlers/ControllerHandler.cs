@@ -19,6 +19,7 @@ namespace Raspkate.Handlers
     {
         private readonly Regex fileNameRegularExpression = new Regex(FileHandler.Pattern);
         private readonly List<ControllerRegistration> controllerRegistrations = new List<ControllerRegistration>();
+        private readonly Dictionary<string, RaspkateController> synchronizedControllers = new Dictionary<string, RaspkateController>();
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public ControllerHandler(RaspkateServer server, IEnumerable<KeyValuePair<string, string>> properties)
@@ -101,7 +102,15 @@ namespace Raspkate.Handlers
 
                             if (values.ContainsKey(parameter.Name))
                             {
-                                parameterValues.Add(values[parameter.Name]);
+                                var v = values[parameter.Name];
+                                if (v.GetType().Equals(parameter.ParameterType))
+                                {
+                                    parameterValues.Add(values[parameter.Name]);
+                                }
+                                else
+                                {
+                                    parameterValues.Add(Convert.ChangeType(v, parameter.ParameterType));
+                                }
                             }
                             else
                             {
@@ -113,19 +122,33 @@ namespace Raspkate.Handlers
                         }
 
                         // Call the controller method
-                        var controller = (RaspkateController)Activator.CreateInstance(controllerRegistration.ControllerType);
+                        RaspkateController controller;
+                        bool synchronized = false;
+                        if (controllerRegistration.ControllerType.IsDefined(typeof(SynchronizedAttribute)) &&
+                            synchronizedControllers.ContainsKey(controllerRegistration.ControllerType.AssemblyQualifiedName))
+                        {
+                            controller = synchronizedControllers[controllerRegistration.ControllerType.AssemblyQualifiedName];
+                            synchronized = true;
+                        }
+                        else
+                        {
+                            controller = (RaspkateController)Activator.CreateInstance(controllerRegistration.ControllerType);
+                        }
+                        
                         if (controller != null)
                         {
-                            if (controllerRegistration.ControllerMethod.ReturnType == typeof(void))
+                            if (synchronized)
                             {
-                                controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray());
-                                response.StatusCode = (int)HttpStatusCode.OK;
+                                lock(controller._syncObject)
+                                {
+                                    InvokeControllerMethod(response, controllerRegistration, parameterValues, controller);
+                                }
                             }
                             else
                             {
-                                var responseString = JsonConvert.SerializeObject(controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray()));
-                                response.WriteResponse(HttpStatusCode.OK, "application/json", responseString);
+                                InvokeControllerMethod(response, controllerRegistration, parameterValues, controller);
                             }
+
                             return;
                         }
                     }
@@ -141,6 +164,20 @@ namespace Raspkate.Handlers
             {
                 log.Error("Error occurred when processing the request.", ex);
                 response.WriteResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        private static void InvokeControllerMethod(HttpListenerResponse response, ControllerRegistration controllerRegistration, List<object> parameterValues, RaspkateController controller)
+        {
+            if (controllerRegistration.ControllerMethod.ReturnType == typeof(void))
+            {
+                controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray());
+                response.StatusCode = (int)HttpStatusCode.OK;
+            }
+            else
+            {
+                var responseString = JsonConvert.SerializeObject(controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray()));
+                response.WriteResponse(HttpStatusCode.OK, "application/json", responseString);
             }
         }
 
@@ -195,6 +232,11 @@ namespace Raspkate.Handlers
                         Route = route,
                         RouteTemplate = routeString
                     });
+
+                if (controllerType.IsDefined(typeof(SynchronizedAttribute)) && !synchronizedControllers.ContainsKey(controllerType.AssemblyQualifiedName))
+                {
+                    synchronizedControllers.Add(controllerType.AssemblyQualifiedName, (RaspkateController)Activator.CreateInstance(controllerType));
+                }
 
                 log.DebugFormat("Route \"{0}\" registered for controller method {1}.{2}.", routeString, controllerType.Name, methodQueryItem.MethodInfo.Name);
             }
