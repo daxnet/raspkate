@@ -47,6 +47,14 @@ namespace Raspkate.Handlers
             }
         }
 
+        protected internal override void OnUnregistered()
+        {
+            foreach(var controller in synchronizedControllers.Values)
+            {
+                controller.Dispose();
+            }
+        }
+
         public override bool ShouldHandle(HttpListenerRequest request)
         {
             return request.RawUrl != "/" &&
@@ -146,7 +154,10 @@ namespace Raspkate.Handlers
                             }
                             else
                             {
-                                InvokeControllerMethod(response, controllerRegistration, parameterValues, controller);
+                                using (controller)
+                                {
+                                    InvokeControllerMethod(response, controllerRegistration, parameterValues, controller);
+                                }
                             }
 
                             return;

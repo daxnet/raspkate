@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Raspberry.IO.GeneralPurpose;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +11,12 @@ namespace Raspkate.Controllers
     [Synchronized]
     public class DefaultRaspkateController : RaspkateController
     {
+        private bool disposed;
+        private readonly GpioConnection raspberryConnection = new GpioConnection();
+
         public DefaultRaspkateController()
         {
-
+            raspberryConnection.Open();
         }
 
         [HttpGet]
@@ -37,5 +41,27 @@ namespace Raspkate.Controllers
             };
         }
 
+        [HttpPost]
+        [Route("setPin/{pin}/{value}")]
+        public void SetPinValue(int pin, bool value)
+        {
+            raspberryConnection.Clear();
+            var connectorPin = ((ConnectorPin)pin).Output();
+            raspberryConnection.Add(connectorPin);
+            raspberryConnection.Pins.First().Enabled = value;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (!disposed)
+                {
+                    raspberryConnection.Close();
+                    ((IDisposable)raspberryConnection).Dispose();
+                    disposed = true;
+                }
+            }
+        }
     }
 }

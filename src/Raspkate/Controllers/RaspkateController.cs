@@ -9,11 +9,24 @@ namespace Raspkate.Controllers
     /// <summary>
     /// Represents the base class of Raspkate controllers.
     /// </summary>
-    public abstract class RaspkateController
+    public abstract class RaspkateController : IDisposable
     {
         /// <summary>
         /// The internal object used for locking and synchronzation.
         /// </summary>
         internal readonly object _syncObject = new object();
+
+        ~RaspkateController()
+        {
+            this.Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected abstract void Dispose(bool disposing);
     }
 }

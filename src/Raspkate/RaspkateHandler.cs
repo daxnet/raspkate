@@ -40,6 +40,8 @@ namespace Raspkate
 
         protected internal virtual void OnRegistering() { }
 
+        protected internal virtual void OnUnregistered() { }
+
         /// <summary>
         /// Checks if the incoming request can be processed by the current module.
         /// </summary>

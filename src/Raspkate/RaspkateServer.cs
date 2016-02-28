@@ -16,19 +16,18 @@ namespace Raspkate
         private volatile bool cancelled;
         private volatile bool prefixesRegistered;
         private readonly ManualResetEvent stopEvent = new ManualResetEvent(false);
-        private readonly List<RaspkateHandler> httpHandlers = new List<RaspkateHandler>();
+        private readonly List<RaspkateHandler> handlers = new List<RaspkateHandler>();
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public RaspkateServer(RaspkateConfiguration configuration)
         {
             this.configuration = configuration;
-            
         }
 
         public IEnumerable<RaspkateHandler> HttpHandlers
         {
-            get { return this.httpHandlers; }
+            get { return this.handlers; }
         }
 
         public RaspkateConfiguration Configuration
@@ -62,6 +61,7 @@ namespace Raspkate
             log.Debug("Stopping HttpListener.");
             this.listener.Stop();
             log.Debug("HttpListener stopped successfully.");
+            this.UnregisterHandlers();
             log.Info("Raspkate service stopped successfully.");
         }
 
@@ -90,7 +90,7 @@ namespace Raspkate
                 if (handler != null)
                 {
                     handler.OnRegistering();
-                    this.httpHandlers.Add(handler);
+                    this.handlers.Add(handler);
                     log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
                 }
                 else
@@ -98,6 +98,11 @@ namespace Raspkate
                     log.WarnFormat("Register handler \"{0}\" failed, skipping...", handlerElement.Type);
                 }
             }
+        }
+
+        private void UnregisterHandlers()
+        {
+            handlers.ForEach(h => h.OnUnregistered());
         }
 
         private void ExecuteThread(object arg)
@@ -153,7 +158,7 @@ namespace Raspkate
         private void ProcessRequest(HttpListenerContext context)
         {
             var handled = false;
-            foreach (var handler in this.httpHandlers)
+            foreach (var handler in this.handlers)
             {
                 if (handler.ShouldHandle(context.Request))
                 {
