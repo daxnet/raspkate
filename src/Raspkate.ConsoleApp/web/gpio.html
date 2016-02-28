@@ -2,12 +2,18 @@
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
+    <!--
+        This is only a test page, and will be removed in future.
+    -->
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE = edge">
+    <meta name="viewport" content="width = device-width, initial-scale = 1">
     <title>Raspkate Service Home Page</title>
     <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" />
     <script src="js/jquery-1.11.3.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script>
+        var state = false;
         $(document).ready(function () {
             $.ajax({
                 url: 'api/getPin/5',
@@ -15,13 +21,28 @@
                 success: function (data) {
                     if (data) {
                         $('#btn').addClass('btn-danger');
+                        $('#btn').text('ON');
                     }
                     else {
                         $('#btn').removeClass('btn-danger');
+                        $('#btn').text('OFF');
                     }
                 }
             });
+
+            $('#btn').click(function () {
+                if ($('#btn').text() == 'ON') {
+                    $.post('api/setPin/5/false');
+                    $('#btn').removeClass('btn-danger');
+                    $('#btn').text('OFF');
+                } else {
+                    $.post('api/setPin/5/true');
+                    $('#btn').addClass('btn-danger');
+                    $('#btn').text('ON');
+                }
+            });
         });
+
 
     </script>
 </head>
@@ -29,7 +50,7 @@
     <div class="container">
         <h1>Raspberry Pi GPIO Testing</h1>
         <hr />
-        <button id="btn" class="btn" type="button">Toggle</button>
+        <span class="text-primary">Current Status: </span><button id="btn" class="btn" type="button">Toggle</button>
     </div>
 </body>
 </html>
