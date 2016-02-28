@@ -52,6 +52,7 @@ namespace Raspkate.Controllers
             {
                 var p = ((ConnectorPin)pin).ToProcessor();
                 var driver = GpioConnectionSettings.DefaultDriver;
+                driver.Allocate(p, PinDirection.Output);
                 driver.Write(p, value);
             }
         }
@@ -66,7 +67,7 @@ namespace Raspkate.Controllers
                 var driver = GpioConnectionSettings.DefaultDriver;
                 return driver.Read(p);
             }
-            return true;
+            return false;
         }
     }
 }
