@@ -27,6 +27,6 @@ namespace Raspkate.Controllers
             GC.SuppressFinalize(this);
         }
 
-        protected abstract void Dispose(bool disposing);
+        protected virtual void Dispose(bool disposing) { }
     }
 }

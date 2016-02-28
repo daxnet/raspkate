@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Raspkate Service Home Page</title>
+    <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: 'api/getPin/5',
+                type: 'GET',
+                success: function (data) {
+                    if (data) {
+                        $('#btn').addClass('btn-danger');
+                    }
+                    else {
+                        $('#btn').removeClass('btn-danger');
+                    }
+                }
+            });
+        });
+
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Raspberry Pi GPIO Testing</h1>
+        <hr />
+        <button id="btn" class="btn" type="button">Toggle</button>
+    </div>
+</body>
+</html>

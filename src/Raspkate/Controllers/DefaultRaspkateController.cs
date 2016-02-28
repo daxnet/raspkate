@@ -11,12 +11,15 @@ namespace Raspkate.Controllers
     [Synchronized]
     public class DefaultRaspkateController : RaspkateController
     {
-        private bool disposed;
-        private readonly GpioConnection raspberryConnection = new GpioConnection();
+        private readonly IGpioConnectionDriver driver;
+        private readonly bool isRaspberryPi = Raspberry.Board.Current.IsRaspberryPi;
 
         public DefaultRaspkateController()
         {
-            raspberryConnection.Open();
+            if (isRaspberryPi)
+            {
+                driver = GpioConnectionSettings.DefaultDriver;
+            }
         }
 
         [HttpGet]
@@ -34,10 +37,10 @@ namespace Raspkate.Controllers
                 Environment.SystemDirectory,
                 Environment.SystemPageSize,
                 FrameworkVersion = Environment.Version.ToString(),
-                IsRaspberryPiDevice = Raspberry.Board.Current.IsRaspberryPi,
-                RaspberryPiModel = Raspberry.Board.Current.IsRaspberryPi ? Raspberry.Board.Current.Model.ToString() : "N/A",
-                RaspberryPiProcessorName = Raspberry.Board.Current.IsRaspberryPi ? Raspberry.Board.Current.ProcessorName : "N/A",
-                RaspberryPiSerialNumber = Raspberry.Board.Current.IsRaspberryPi ? Raspberry.Board.Current.SerialNumber : "N/A"
+                IsRaspberryPiDevice = isRaspberryPi,
+                RaspberryPiModel = isRaspberryPi ? Raspberry.Board.Current.Model.ToString() : "N/A",
+                RaspberryPiProcessorName = isRaspberryPi ? Raspberry.Board.Current.ProcessorName : "N/A",
+                RaspberryPiSerialNumber = isRaspberryPi ? Raspberry.Board.Current.SerialNumber : "N/A"
             };
         }
 
@@ -45,23 +48,25 @@ namespace Raspkate.Controllers
         [Route("setPin/{pin}/{value}")]
         public void SetPinValue(int pin, bool value)
         {
-            raspberryConnection.Clear();
-            var connectorPin = ((ConnectorPin)pin).Output();
-            raspberryConnection.Add(connectorPin);
-            raspberryConnection.Pins.First().Enabled = value;
+            if (isRaspberryPi)
+            {
+                var p = ((ConnectorPin)pin).ToProcessor();
+                var driver = GpioConnectionSettings.DefaultDriver;
+                driver.Write(p, value);
+            }
         }
 
-        protected override void Dispose(bool disposing)
+        [HttpGet]
+        [Route("getPin/{pin}")]
+        public bool GetPinValue(int pin)
         {
-            if (disposing)
+            if (isRaspberryPi)
             {
-                if (!disposed)
-                {
-                    raspberryConnection.Close();
-                    ((IDisposable)raspberryConnection).Dispose();
-                    disposed = true;
-                }
+                var p = ((ConnectorPin)pin).ToProcessor();
+                var driver = GpioConnectionSettings.DefaultDriver;
+                return driver.Read(p);
             }
+            return true;
         }
     }
 }
