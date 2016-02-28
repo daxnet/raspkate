@@ -2,10 +2,10 @@
 PARAM=''
 if [ "$1" == 'Debug' ]
   then
-    PARAM='/property:Configuration=Debug;TargetFrameworkVersion=v4.5.2 Raspkate.sln'
+    PARAM='/property:Configuration=Debug;TargetFrameworkVersion=v4.5 Raspkate.sln'
 elif [ "$1" == 'Release' ]
   then
-    PARAM='/property:Configuration=Release;TargetFrameworkVersion=v4.5.2 Raspkate.sln'
+    PARAM='/property:Configuration=Release;TargetFrameworkVersion=v4.5 Raspkate.sln'
 else
   printf "\n"
   printf "Raspkate Command-Line Build Tool v1.0\n\n"
