@@ -10,9 +10,9 @@ namespace Raspkate
 {
     public class RaspkateServer
     {
+        private Thread thread;
         private readonly RaspkateConfiguration configuration;
         private readonly HttpListener listener = new HttpListener();
-        private Thread thread;
         private volatile bool cancelled;
         private volatile bool prefixesRegistered;
         private readonly ManualResetEvent stopEvent = new ManualResetEvent(false);
@@ -69,33 +69,40 @@ namespace Raspkate
         {
             foreach(HandlerElement handlerElement in config.Handlers)
             {
-                var handlerType = Type.GetType(handlerElement.Type);
-                if (handlerType == null ||
-                    !handlerType.IsSubclassOf(typeof(RaspkateHandler)))
+                try
                 {
-                    log.WarnFormat("Cannot load CLR type from name \"{0}\", skipping...", handlerElement.Type);
-                    continue;
-                }
-
-                Dictionary<string, string> properties = new Dictionary<string, string>();
-                if (handlerElement.HandlerProperties != null)
-                {
-                    foreach(HandlerPropertyElement hpe in handlerElement.HandlerProperties)
+                    var handlerType = Type.GetType(handlerElement.Type);
+                    if (handlerType == null ||
+                        !handlerType.IsSubclassOf(typeof(RaspkateHandler)))
                     {
-                        properties.Add(hpe.Name, hpe.Value);
+                        log.WarnFormat("Cannot load CLR type from name \"{0}\", skipping...", handlerElement.Type);
+                        continue;
+                    }
+
+                    Dictionary<string, string> properties = new Dictionary<string, string>();
+                    if (handlerElement.HandlerProperties != null)
+                    {
+                        foreach (HandlerPropertyElement hpe in handlerElement.HandlerProperties)
+                        {
+                            properties.Add(hpe.Name, hpe.Value);
+                        }
+                    }
+
+                    var handler = (RaspkateHandler)Activator.CreateInstance(handlerType, this, properties);
+                    if (handler != null)
+                    {
+                        handler.OnRegistering();
+                        this.handlers.Add(handler);
+                        log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
+                    }
+                    else
+                    {
+                        log.WarnFormat("Register handler \"{0}\" failed, skipping...", handlerElement.Type);
                     }
                 }
-
-                var handler = (RaspkateHandler)Activator.CreateInstance(handlerType, this, properties);
-                if (handler != null)
+                catch(Exception ex)
                 {
-                    handler.OnRegistering();
-                    this.handlers.Add(handler);
-                    log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
-                }
-                else
-                {
-                    log.WarnFormat("Register handler \"{0}\" failed, skipping...", handlerElement.Type);
+                    log.Warn(string.Format("Failed to register handler \"{0}\", skipping...", handlerElement.Type), ex);
                 }
             }
         }
@@ -160,15 +167,22 @@ namespace Raspkate
             var handled = false;
             foreach (var handler in this.handlers)
             {
-                if (handler.ShouldHandle(context.Request))
+                try
                 {
-                    handler.Process(context.Request, context.Response);
-                    handled = true;
-                    break;
+                    if (handler.ShouldHandle(context.Request))
+                    {
+                        handler.Process(context.Request, context.Response);
+                        handled = true;
+                        break;
+                    }
+                    else
+                    {
+                        log.DebugFormat("Handler \"{0}\" cannot handle the request with URL \"{1}\", skipped.", handler, context.Request.Url);
+                    }
                 }
-                else
+                catch(Exception ex)
                 {
-                    log.DebugFormat("Handler \"{0}\" cannot handle the request with URL \"{1}\", skipped.", handler, context.Request.Url);
+                    log.Warn(string.Format("Failed to check whether the current handler (Handler: \"{0}\") can handle the given request, skipping...", handler), ex);
                 }
             }
 

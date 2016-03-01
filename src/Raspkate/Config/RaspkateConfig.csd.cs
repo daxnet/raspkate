@@ -80,32 +80,6 @@ namespace Raspkate.Config
         }
         #endregion
         
-        #region BasePath Property
-        /// <summary>
-        /// The XML name of the <see cref="BasePath"/> property.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        internal const string BasePathPropertyName = "basePath";
-        
-        /// <summary>
-        /// Gets or sets the BasePath.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        [global::System.ComponentModel.DescriptionAttribute("The BasePath.")]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::Raspkate.Config.RaspkateConfiguration.BasePathPropertyName, IsRequired=true, IsKey=false, IsDefaultCollection=false)]
-        public virtual string BasePath
-        {
-            get
-            {
-                return ((string)(base[global::Raspkate.Config.RaspkateConfiguration.BasePathPropertyName]));
-            }
-            set
-            {
-                base[global::Raspkate.Config.RaspkateConfiguration.BasePathPropertyName] = value;
-            }
-        }
-        #endregion
-        
         #region Prefix Property
         /// <summary>
         /// The XML name of the <see cref="Prefix"/> property.
@@ -128,32 +102,6 @@ namespace Raspkate.Config
             set
             {
                 base[global::Raspkate.Config.RaspkateConfiguration.PrefixPropertyName] = value;
-            }
-        }
-        #endregion
-        
-        #region Relative Property
-        /// <summary>
-        /// The XML name of the <see cref="Relative"/> property.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        internal const string RelativePropertyName = "relative";
-        
-        /// <summary>
-        /// Gets or sets the Relative.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        [global::System.ComponentModel.DescriptionAttribute("The Relative.")]
-        [global::System.Configuration.ConfigurationPropertyAttribute(global::Raspkate.Config.RaspkateConfiguration.RelativePropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
-        public virtual bool Relative
-        {
-            get
-            {
-                return ((bool)(base[global::Raspkate.Config.RaspkateConfiguration.RelativePropertyName]));
-            }
-            set
-            {
-                base[global::Raspkate.Config.RaspkateConfiguration.RelativePropertyName] = value;
             }
         }
         #endregion

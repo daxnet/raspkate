@@ -13,19 +13,9 @@
   <configurationElements>
     <configurationSection name="RaspkateConfiguration" codeGenOptions="Singleton, XmlnsProperty" xmlSectionName="raspkateConfiguration">
       <attributeProperties>
-        <attributeProperty name="BasePath" isRequired="true" isKey="false" isDefaultCollection="false" xmlName="basePath" isReadOnly="false">
-          <type>
-            <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
-          </type>
-        </attributeProperty>
         <attributeProperty name="Prefix" isRequired="true" isKey="false" isDefaultCollection="false" xmlName="prefix" isReadOnly="false">
           <type>
             <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
-          </type>
-        </attributeProperty>
-        <attributeProperty name="Relative" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="relative" isReadOnly="false">
-          <type>
-            <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/Boolean" />
           </type>
         </attributeProperty>
       </attributeProperties>

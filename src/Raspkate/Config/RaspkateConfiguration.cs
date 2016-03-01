@@ -17,7 +17,7 @@ namespace Raspkate.Config
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("{ \"Prefix\": \"" + this.Prefix + "\", \"BasePath\": \"" + this.BasePath + "\", \"Relative\": \"" + this.Relative + "\", \"Handlers\": [");
+            sb.Append("{ \"Prefix\": \"" + this.Prefix + "\", \"Handlers\": [");
             if (this.Handlers.Count > 0)
             {
                 sb.Append(this.Handlers);

@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\ConfigurationException.cs" />
     <Compile Include="Config\HandlerElement.cs" />
     <Compile Include="Config\HandlerElementCollection.cs" />
     <Compile Include="Config\HandlerPropertyElement.cs" />

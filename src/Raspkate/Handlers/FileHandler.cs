@@ -6,6 +6,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Reflection;
 using System;
+using Raspkate.Config;
 
 namespace Raspkate.Handlers
 {
@@ -16,12 +17,23 @@ namespace Raspkate.Handlers
 
         private readonly Regex regularExpression = new Regex(Pattern);
         private readonly ThreadLocal<string> requestedFileName = new ThreadLocal<string>(() => string.Empty);
+        private readonly string configuredBasePath;
+        private readonly string configuredDefaultPages;
+        private readonly bool isRelativePath;
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public FileHandler(RaspkateServer server, IEnumerable<KeyValuePair<string, string>> properties)
             : base(server, properties)
         {
+            configuredBasePath = this.GetPropertyValue("BasePath");
+            if (string.IsNullOrEmpty(configuredBasePath))
+            {
+                throw new ConfigurationException("No base path specified in the property configuration of FileHandler, the base path is specified in the <property> tag with the name of \"BasePath\".");
+            }
+            configuredDefaultPages = this.GetPropertyValue("DefaultPages");
+            var strRelativePathValue = this.GetPropertyValue("IsRelativePath");
+            bool.TryParse(strRelativePathValue, out isRelativePath);
         }
 
 
@@ -29,10 +41,9 @@ namespace Raspkate.Handlers
         {
             if (request.RawUrl == "/")
             {
-                var defaultPages = this.GetPropertyValue("DefaultPages");
-                if (!string.IsNullOrEmpty(defaultPages))
+                if (!string.IsNullOrEmpty(configuredDefaultPages))
                 {
-                    var defaultPageList = defaultPages.Split(';').Select(p => p.Trim());
+                    var defaultPageList = configuredDefaultPages.Split(';').Select(p => p.Trim());
                     foreach(var defaultPage in defaultPageList)
                     {
                         var fullName = Path.Combine(this.BasePath, defaultPage);
@@ -75,11 +86,11 @@ namespace Raspkate.Handlers
         {
             get
             {
-                if (this.Server.Configuration.Relative)
+                if (this.isRelativePath)
                 {
-                    return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), this.Server.Configuration.BasePath);
+                    return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), this.configuredBasePath);
                 }
-                return this.Server.Configuration.BasePath;
+                return this.configuredBasePath;
             }
         }
     }

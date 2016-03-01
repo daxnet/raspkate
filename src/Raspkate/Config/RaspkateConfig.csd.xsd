@@ -17,19 +17,9 @@
 				</xs:annotation>
 			</xs:element>
 		</xs:choice>
-		<xs:attribute name="basePath" use="required" type="xs:string">
-			<xs:annotation>
-				<xs:documentation>The BasePath.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
 		<xs:attribute name="prefix" use="required" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>The Prefix.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="relative" use="optional" type="xs:boolean">
-			<xs:annotation>
-				<xs:documentation>The Relative.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 	</xs:complexType>
