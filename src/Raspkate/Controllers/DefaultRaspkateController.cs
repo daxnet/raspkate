@@ -1,5 +1,4 @@
-﻿using Raspberry.IO.GeneralPurpose;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,15 +10,8 @@ namespace Raspkate.Controllers
     [Synchronized]
     public class DefaultRaspkateController : RaspkateController
     {
-        private readonly IGpioConnectionDriver driver;
-        private readonly bool isRaspberryPi = Raspberry.Board.Current.IsRaspberryPi;
-
         public DefaultRaspkateController()
         {
-            if (isRaspberryPi)
-            {
-                driver = GpioConnectionSettings.DefaultDriver;
-            }
         }
 
         [HttpGet]
@@ -36,38 +28,34 @@ namespace Raspkate.Controllers
                 Environment.ProcessorCount,
                 Environment.SystemDirectory,
                 Environment.SystemPageSize,
-                FrameworkVersion = Environment.Version.ToString(),
-                IsRaspberryPiDevice = isRaspberryPi,
-                RaspberryPiModel = isRaspberryPi ? Raspberry.Board.Current.Model.ToString() : "N/A",
-                RaspberryPiProcessorName = isRaspberryPi ? Raspberry.Board.Current.ProcessorName : "N/A",
-                RaspberryPiSerialNumber = isRaspberryPi ? Raspberry.Board.Current.SerialNumber : "N/A"
+                FrameworkVersion = Environment.Version.ToString()
             };
         }
 
-        [HttpPost]
-        [Route("setPin/{pin}/{value}")]
-        public void SetPinValue(int pin, bool value)
-        {
-            if (isRaspberryPi)
-            {
-                var p = ((ConnectorPin)pin).ToProcessor();
-                var driver = GpioConnectionSettings.DefaultDriver;
-                driver.Allocate(p, PinDirection.Output);
-                driver.Write(p, value);
-            }
-        }
+        //[HttpPost]
+        //[Route("setPin/{pin}/{value}")]
+        //public void SetPinValue(int pin, bool value)
+        //{
+        //    if (isRaspberryPi)
+        //    {
+        //        var p = ((ConnectorPin)pin).ToProcessor();
+        //        var driver = GpioConnectionSettings.DefaultDriver;
+        //        driver.Allocate(p, PinDirection.Output);
+        //        driver.Write(p, value);
+        //    }
+        //}
 
-        [HttpGet]
-        [Route("getPin/{pin}")]
-        public bool GetPinValue(int pin)
-        {
-            if (isRaspberryPi)
-            {
-                var p = ((ConnectorPin)pin).ToProcessor();
-                var driver = GpioConnectionSettings.DefaultDriver;
-                return driver.Read(p);
-            }
-            return false;
-        }
+        //[HttpGet]
+        //[Route("getPin/{pin}")]
+        //public bool GetPinValue(int pin)
+        //{
+        //    if (isRaspberryPi)
+        //    {
+        //        var p = ((ConnectorPin)pin).ToProcessor();
+        //        var driver = GpioConnectionSettings.DefaultDriver;
+        //        return driver.Read(p);
+        //    }
+        //    return false;
+        //}
     }
 }
