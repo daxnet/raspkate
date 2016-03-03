@@ -7,9 +7,16 @@ using System.Threading.Tasks;
 
 namespace Raspkate.RaspberryPi
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [RoutePrefix("raspberry")]
-    public class RaspberryController : RaspkateController
+    internal class RaspberryController : RaspkateController
     {
+        /// <summary>
+        /// Gets the Raspberry Pi board information.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("board")]
         public dynamic GetBoardInformation()

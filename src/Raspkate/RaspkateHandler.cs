@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Raspkate
 {
-    public abstract class RaspkateHandler
+    public abstract class RaspkateHandler : IRaspkateHandler
     {
         private readonly RaspkateServer server;
         private readonly IEnumerable<KeyValuePair<string, string>> properties;

@@ -8,7 +8,7 @@ using Raspkate.Config;
 
 namespace Raspkate
 {
-    public class RaspkateServer
+    public class RaspkateServer : IRaspkateServer
     {
         private Thread thread;
         private readonly RaspkateConfiguration configuration;
@@ -25,7 +25,7 @@ namespace Raspkate
             this.configuration = configuration;
         }
 
-        public IEnumerable<RaspkateHandler> HttpHandlers
+        public IEnumerable<IRaspkateHandler> Handlers
         {
             get { return this.handlers; }
         }

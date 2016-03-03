@@ -85,6 +85,8 @@
     <Compile Include="Handlers\ControllerHandler.cs" />
     <Compile Include="Controllers\RaspkateController.cs" />
     <Compile Include="Handlers\ControllerRegistration.cs" />
+    <Compile Include="IRaspkateHandler.cs" />
+    <Compile Include="IRaspkateServer.cs" />
     <Compile Include="RaspkateException.cs" />
     <Compile Include="RaspkateHandler.cs" />
     <Compile Include="Handlers\FileHandler.cs" />
