@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Raspkate.Controllers
 {
     [AttributeUsage(AttributeTargets.Parameter)]
-    public class FromBodyAttribute : Attribute
+    public sealed class FromBodyAttribute : Attribute
     {
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Raspkate.Controllers.Routing
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class RouteItemAttribute : Attribute
+    internal sealed class RouteItemAttribute : Attribute
     {
         public string Template { get; private set; }
 

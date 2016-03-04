@@ -10,7 +10,7 @@ namespace Raspkate.Controllers
     /// Represents the HTTP GET method.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class HttpGetAttribute : HttpMethodAttribute
+    public sealed class HttpGetAttribute : HttpMethodAttribute
     {
         /// <summary>
         /// Initializes a new instancce of <see cref="HttpGetAttribute"/> class.

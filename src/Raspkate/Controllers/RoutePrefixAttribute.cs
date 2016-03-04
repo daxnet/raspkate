@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Raspkate.Controllers
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class RoutePrefixAttribute : Attribute
+    public sealed class RoutePrefixAttribute : Attribute
     {
         public RoutePrefixAttribute(string prefix)
         {

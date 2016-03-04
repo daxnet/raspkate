@@ -10,7 +10,7 @@ namespace Raspkate.Controllers
     /// Represents the HTTP POST method.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class HttpPostAttribute : HttpMethodAttribute
+    public sealed class HttpPostAttribute : HttpMethodAttribute
     {
         /// <summary>
         /// Initializes a new instace of <see cref="HttpPostAttribute"/> class.
