@@ -39,11 +39,11 @@ Before compile and run, you should firstly either download the source code as a 
 
 - For running in both Windows and Linux, after the successful compilation in either platform, go into the `bin` folder which is a sub folder of `src`, and find the executable file named `RaspkateService.exe` under the output folder of corresponding configuration (e.g. `Debug` or `Release`), execute it directly, you will see a console output like following:
 
-![Service Started](http://daxnet.me/files/_screenshots/raspkate/ServiceStarted.png)
+![Service Started](https://raw.githubusercontent.com/wiki/daxnet/raspkate/img/ServiceStarted.png)
 
 - After successfully running the server, you can access `http://127.0.0.1:9023` in your web browser to check your server information, like below:
  
-![Server Information](http://daxnet.me/files/_screenshots/raspkate/Congrats.png)
+![Server Information](https://raw.githubusercontent.com/wiki/daxnet/raspkate/img/Congrats.png)
 
 > Important Note: If you are going to load `Raspkate.RaspberryPi` module during the server startup, in order that to be able to access the functionality specific to Raspberry Pi device, you should run Raspkate service under Raspberry Pi by using the command `sudo ./RaspkateService.exe` with the root priviledge granted.
 
