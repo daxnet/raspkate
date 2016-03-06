@@ -5,11 +5,28 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Raspkate.Config;
+using System.Reflection;
 
 namespace Raspkate
 {
     public class RaspkateServer : IRaspkateServer
     {
+        #region Logo
+        private const string logo = @"
+
+                                           **                              
+    ******                                 **                              
+    **   ***                              **                  **           
+   **    **    *******  *****   *******   **  ***  *******  *****   ****** 
+   ******    ***   **  ***     ***   **   ** **   **    **   **    **   ** 
+   **  **    **    **   ****   **    **  *****   ***    *    *    ******   
+  **    **   **   **      ***  **   ***  **  **  **    **   **    **       
+  **    **   *******  ******  ********  ***  ***  *******   ****  *******  
+                              **                                           
+                              **                                           
+";
+        #endregion
+
         private Thread thread;
         private readonly RaspkateConfiguration configuration;
         private readonly HttpListener listener = new HttpListener();
@@ -37,6 +54,9 @@ namespace Raspkate
 
         public void Start()
         {
+            log.Info(logo);
+            log.Info("Raspkate - A small and lightweight Web Server");
+            log.Info(string.Format("[ Version: {0} ]", Version));
             log.Info(string.Format("Starting Raspkate service with the configuration:{0}{1}", Environment.NewLine, this.configuration));
             this.RegisterPrefixes(new[] { configuration.Prefix });
             this.RegisterHandlers(configuration);
@@ -63,6 +83,14 @@ namespace Raspkate
             log.Debug("HttpListener stopped successfully.");
             this.UnregisterHandlers();
             log.Info("Raspkate service stopped successfully.");
+        }
+
+        private static Version Version
+        {
+            get
+            {
+                return Assembly.GetExecutingAssembly().GetName().Version;
+            }
         }
 
         private void RegisterHandlers(RaspkateConfiguration config)
