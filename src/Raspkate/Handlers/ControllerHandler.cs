@@ -22,8 +22,8 @@ namespace Raspkate.Handlers
         private readonly Dictionary<string, RaspkateController> synchronizedControllers = new Dictionary<string, RaspkateController>();
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public ControllerHandler(RaspkateServer server, IEnumerable<KeyValuePair<string, string>> properties)
-            : base(server, properties)
+        public ControllerHandler(string name, IEnumerable<KeyValuePair<string, string>> properties)
+            : base(name, properties)
         { }
 
         protected internal override void OnRegistering()
@@ -61,7 +61,7 @@ namespace Raspkate.Handlers
                 !this.fileNameRegularExpression.Match(request.RawUrl.Trim('\\', '/', '?')).Success;
         }
 
-        public override void Process(HttpListenerRequest request, HttpListenerResponse response)
+        public override HandlerProcessResult Process(HttpListenerRequest request)
         {
             try
             {
@@ -70,13 +70,13 @@ namespace Raspkate.Handlers
                 {
                     requestedUri = requestedUri.Substring(0, requestedUri.IndexOf('?'));
                 }
-                foreach(var controllerRegistration in this.controllerRegistrations)
+                foreach (var controllerRegistration in this.controllerRegistrations)
                 {
                     // Checks the HTTP method.
                     var httpMethodName = controllerRegistration.ControllerMethod.GetCustomAttribute<HttpMethodAttribute>().MethodName;
                     if (request.HttpMethod != httpMethodName)
                     {
-                        log.DebugFormat("The HTTP method in the request \"{0}\" is different from the one defined on the controller method (Requested {1} but {2}).", 
+                        log.DebugFormat("The HTTP method in the request \"{0}\" is different from the one defined on the controller method (Requested {1} but {2}).",
                             requestedUri, request.HttpMethod, httpMethodName);
                         continue;
                     }
@@ -87,7 +87,7 @@ namespace Raspkate.Handlers
                     {
                         // If successfully get the route values, then bind the parameter.
                         List<object> parameterValues = new List<object>();
-                        foreach(var parameter in controllerRegistration.ControllerMethod.GetParameters())
+                        foreach (var parameter in controllerRegistration.ControllerMethod.GetParameters())
                         {
                             if (parameter.IsDefined(typeof(FromBodyAttribute)))
                             {
@@ -122,9 +122,9 @@ namespace Raspkate.Handlers
                             }
                             else
                             {
-                                throw new ControllerException("Parameter binding failed: Unrecognized parameter \"{0}\" defined in the controller method {1}.{2}.", 
-                                    parameter.Name, 
-                                    controllerRegistration.ControllerType.Name, 
+                                throw new ControllerException("Parameter binding failed: Unrecognized parameter \"{0}\" defined in the controller method {1}.{2}.",
+                                    parameter.Name,
+                                    controllerRegistration.ControllerType.Name,
                                     controllerRegistration.ControllerMethod.Name);
                             }
                         }
@@ -142,25 +142,23 @@ namespace Raspkate.Handlers
                         {
                             controller = (RaspkateController)Activator.CreateInstance(controllerRegistration.ControllerType);
                         }
-                        
+
                         if (controller != null)
                         {
                             if (synchronized)
                             {
-                                lock(controller._syncObject)
+                                lock (controller._syncObject)
                                 {
-                                    InvokeControllerMethod(response, controllerRegistration, parameterValues, controller);
+                                    return InvokeControllerMethod(controllerRegistration, parameterValues, controller);
                                 }
                             }
                             else
                             {
                                 using (controller)
                                 {
-                                    InvokeControllerMethod(response, controllerRegistration, parameterValues, controller);
+                                    return InvokeControllerMethod(controllerRegistration, parameterValues, controller);
                                 }
                             }
-
-                            return;
                         }
                     }
                 }
@@ -169,26 +167,26 @@ namespace Raspkate.Handlers
             catch (ControllerException ex)
             {
                 log.Warn("Unable to proceed with the given request.", ex);
-                response.WriteResponse(HttpStatusCode.BadRequest, ex);
+                return HandlerProcessResult.Exception(HttpStatusCode.BadRequest, ex);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 log.Error("Error occurred when processing the request.", ex);
-                response.WriteResponse(HttpStatusCode.InternalServerError, ex);
+                return HandlerProcessResult.Exception(HttpStatusCode.InternalServerError, ex);
             }
         }
 
-        private static void InvokeControllerMethod(HttpListenerResponse response, ControllerRegistration controllerRegistration, List<object> parameterValues, RaspkateController controller)
+        private static HandlerProcessResult InvokeControllerMethod(ControllerRegistration controllerRegistration, List<object> parameterValues, RaspkateController controller)
         {
             if (controllerRegistration.ControllerMethod.ReturnType == typeof(void))
             {
                 controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray());
-                response.StatusCode = (int)HttpStatusCode.OK;
+                return HandlerProcessResult.Success;
             }
             else
             {
                 var responseString = JsonConvert.SerializeObject(controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray()));
-                response.WriteResponse(HttpStatusCode.OK, "application/json", responseString);
+                return HandlerProcessResult.Json(HttpStatusCode.OK, responseString);
             }
         }
 

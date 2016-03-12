@@ -23,8 +23,8 @@ namespace Raspkate.Handlers
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public FileHandler(RaspkateServer server, IEnumerable<KeyValuePair<string, string>> properties)
-            : base(server, properties)
+        public FileHandler(string name, IEnumerable<KeyValuePair<string, string>> properties)
+            : base(name, properties)
         {
             configuredBasePath = this.GetPropertyValue("BasePath");
             if (string.IsNullOrEmpty(configuredBasePath))
@@ -44,7 +44,7 @@ namespace Raspkate.Handlers
                 if (!string.IsNullOrEmpty(configuredDefaultPages))
                 {
                     var defaultPageList = configuredDefaultPages.Split(';').Select(p => p.Trim());
-                    foreach(var defaultPage in defaultPageList)
+                    foreach (var defaultPage in defaultPageList)
                     {
                         var fullName = Path.Combine(this.BasePath, defaultPage);
                         if (File.Exists(fullName))
@@ -66,19 +66,27 @@ namespace Raspkate.Handlers
             return false;
         }
 
-        public override void Process(HttpListenerRequest request, HttpListenerResponse response)
+        public override HandlerProcessResult Process(HttpListenerRequest request)
         {
-            var fileNameRequested = Path.Combine(this.BasePath, this.requestedFileName.Value.Replace("/", Path.DirectorySeparatorChar.ToString()));
-            log.DebugFormat("File requested: {0}", fileNameRequested);
-            if (!File.Exists(fileNameRequested))
+            try
             {
-                response.StatusCode = (int)HttpStatusCode.NotFound;
+                var fileNameRequested = Path.Combine(this.BasePath, this.requestedFileName.Value.Replace("/", Path.DirectorySeparatorChar.ToString()));
+                log.DebugFormat("File requested: {0}", fileNameRequested);
+                if (!File.Exists(fileNameRequested))
+                {
+                    return HandlerProcessResult.Text(HttpStatusCode.NotFound, string.Format("Requested file \"{0}\" doesn't exist.", fileNameRequested));
+                }
+                else
+                {
+                    var fileBytes = File.ReadAllBytes(fileNameRequested);
+                    var contentType = Utils.GetMimeType(Path.GetExtension(fileNameRequested));
+                    return HandlerProcessResult.File(HttpStatusCode.OK, contentType, fileBytes);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                var fileBytes = File.ReadAllBytes(fileNameRequested);
-                var contentType = Utils.GetMimeType(Path.GetExtension(fileNameRequested));
-                response.WriteResponse(HttpStatusCode.OK, contentType, fileBytes);
+                log.Error("Error occurred when processing the request.", ex);
+                return HandlerProcessResult.Exception(HttpStatusCode.InternalServerError, ex);
             }
         }
 

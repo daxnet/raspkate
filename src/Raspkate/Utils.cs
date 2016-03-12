@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -596,20 +598,10 @@ namespace Raspkate
             return _mappings.TryGetValue(extension, out mime) ? mime : "application/octet-stream";
         }
 
-        internal static void WriteResponse(this HttpListenerResponse response, HttpStatusCode code, Exception exception)
+        internal static void WriteResponse(this HttpListenerResponse response, HttpStatusCode code, string contentType, string content)
         {
-            response.WriteResponse(code, "text/plain", exception.ToString());
-        }
-
-        internal static void WriteResponse(this HttpListenerResponse response, HttpStatusCode code, string contentType, string content, Encoding encoding = null)
-        {
-            if (encoding == null)
-            {
-                encoding = Encoding.UTF8;
-            }
-
-            var bytes = encoding.GetBytes(content);
-            response.ContentEncoding = encoding;
+            var bytes = HandlerProcessResult.ContentEncoding.GetBytes(content);
+            response.ContentEncoding = HandlerProcessResult.ContentEncoding;
             response.WriteResponse(code, contentType, bytes);
         }
 
@@ -619,6 +611,32 @@ namespace Raspkate
             response.StatusCode = (int)code;
             response.ContentType = contentType;
             response.OutputStream.Write(bytes, 0, bytes.Length);
+        }
+
+        internal static void WriteResponse(this HttpListenerResponse response, HandlerProcessResult result)
+        {
+            response.StatusCode = (int)result.StatusCode;
+            if (!string.IsNullOrEmpty(result.ContentType) &&
+                result.Content!=null)
+            {
+                response.ContentEncoding = HandlerProcessResult.ContentEncoding;
+                response.ContentLength64 = result.Content.LongLength;
+                response.ContentType = result.ContentType;
+                response.OutputStream.Write(result.Content, 0, result.Content.Length);
+            }
+        }
+
+        internal static void WriteResponse(this HttpListenerResponse response, HttpStatusCode statusCode, IEnumerable<Tuple<IRaspkateHandler, HandlerProcessResult>> resultList)
+        {
+            var jsonResult = JsonConvert.SerializeObject(new
+            {
+                HandlerProcessResultList = resultList.Select(p => new
+                {
+                    Handler = p.Item1 == null ? null : new { p.Item1.Name, Type = p.Item1.GetType() },
+                    HandlerProcessResult = p.Item2
+                })
+            });
+            WriteResponse(response, statusCode, "application/json", jsonResult);
         }
     }
 }

@@ -82,11 +82,17 @@
     <Compile Include="Controllers\Routing\RouteParser.cs" />
     <Compile Include="Controllers\Routing\RouteValueCollection.cs" />
     <Compile Include="Controllers\SynchronizedAttribute.cs" />
+    <Compile Include="HandlerProcessResult.cs" />
     <Compile Include="Handlers\ControllerHandler.cs" />
     <Compile Include="Controllers\RaspkateController.cs" />
     <Compile Include="Handlers\ControllerRegistration.cs" />
     <Compile Include="IRaspkateHandler.cs" />
     <Compile Include="IRaspkateServer.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RaspkateException.cs" />
     <Compile Include="RaspkateHandler.cs" />
     <Compile Include="Handlers\FileHandler.cs" />
@@ -113,7 +119,12 @@
     </None>
     <None Include="Raspkate.snk" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>

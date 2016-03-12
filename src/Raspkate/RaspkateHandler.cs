@@ -7,7 +7,7 @@ namespace Raspkate
 {
     public abstract class RaspkateHandler : IRaspkateHandler
     {
-        private readonly RaspkateServer server;
+        private readonly string name;
         private readonly IEnumerable<KeyValuePair<string, string>> properties;
 
         /// <summary>
@@ -15,22 +15,21 @@ namespace Raspkate
         /// </summary>
         /// <param name="server">The <see cref="UnifiedSpaServer"/> instance on which the module
         /// is registered and executed.</param>
-        protected RaspkateHandler(RaspkateServer server, IEnumerable<KeyValuePair<string, string>> properties)
+        protected RaspkateHandler(string name, IEnumerable<KeyValuePair<string, string>> properties)
         {
-            this.server = server;
+            this.name = name;
             this.properties = properties;
         }
 
         /// <summary>
-        /// Gets the <see cref="UnifiedSpaServer"/> instance on which the module
-        /// is registered and executed.
+        /// Gets the name of the handler.
         /// </summary>
         /// <value>
-        /// The server.
+        /// The name.
         /// </value>
-        protected RaspkateServer Server
+        public string Name
         {
-            get { return this.server; }
+            get { return this.name; }
         }
 
         protected string GetPropertyValue(string propertyName)
@@ -54,6 +53,6 @@ namespace Raspkate
         /// </summary>
         /// <param name="request">The request which should be processed.</param>
         /// <param name="response">The response to which the processing result is populated.</param>
-        public abstract void Process(HttpListenerRequest request, HttpListenerResponse response);
+        public abstract HandlerProcessResult Process(HttpListenerRequest request);
     }
 }

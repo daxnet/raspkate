@@ -29,6 +29,13 @@ namespace Raspkate
     public interface IRaspkateHandler
     {
         /// <summary>
+        /// Gets the name of the handler.
+        /// </summary>
+        /// <value>
+        /// The name.
+        /// </value>
+        string Name { get; }
+        /// <summary>
         /// Returns a <see cref="bool"/> value which indicates whether the current handler
         /// can handle the given HTTP request.
         /// </summary>
@@ -41,6 +48,6 @@ namespace Raspkate
         /// </summary>
         /// <param name="request">The request to be processed by current handler.</param>
         /// <param name="response">The response which contains the returned data.</param>
-        void Process(HttpListenerRequest request, HttpListenerResponse response);
+        HandlerProcessResult Process(HttpListenerRequest request);
     }
 }

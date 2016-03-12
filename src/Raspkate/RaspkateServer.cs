@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -6,27 +7,12 @@ using System.Threading;
 using Newtonsoft.Json;
 using Raspkate.Config;
 using System.Reflection;
+using Raspkate.Properties;
 
 namespace Raspkate
 {
     public class RaspkateServer : IRaspkateServer
     {
-        #region Logo
-        private const string logo = @"
-
-                                           **                              
-    ******                                 **                              
-    **   ***                              **                  **           
-   **    **    *******  *****   *******   **  ***  *******  *****   ****** 
-   ******    ***   **  ***     ***   **   ** **   **    **   **    **   ** 
-   **  **    **    **   ****   **    **  *****   ***    *    *    ******   
-  **    **   **   **      ***  **   ***  **  **  **    **   **    **       
-  **    **   *******  ******  ********  ***  ***  *******   ****  *******  
-                              **                                           
-                              **                                           
-";
-        #endregion
-
         private Thread thread;
         private readonly RaspkateConfiguration configuration;
         private readonly HttpListener listener = new HttpListener();
@@ -54,7 +40,7 @@ namespace Raspkate
 
         public void Start()
         {
-            log.Info(logo);
+            log.Info(Resources.Logo);
             log.Info("Raspkate - A small and lightweight Web Server");
             log.Info(string.Format("[ Version: {0} ]", Version));
             log.Info(string.Format("Starting Raspkate service with the configuration:{0}{1}", Environment.NewLine, this.configuration));
@@ -116,7 +102,7 @@ namespace Raspkate
                         }
                     }
 
-                    var handler = (RaspkateHandler)Activator.CreateInstance(handlerType, this, properties);
+                    var handler = (RaspkateHandler)Activator.CreateInstance(handlerType, handlerElement.Name, properties);
                     if (handler != null)
                     {
                         handler.OnRegistering();
@@ -192,31 +178,54 @@ namespace Raspkate
 
         private void ProcessRequest(HttpListenerContext context)
         {
-            var handled = false;
+            var incorrectResults = new List<Tuple<IRaspkateHandler, HandlerProcessResult>>();
             foreach (var handler in this.handlers)
             {
                 try
                 {
                     if (handler.ShouldHandle(context.Request))
                     {
-                        handler.Process(context.Request, context.Response);
-                        handled = true;
-                        break;
+                        var result = handler.Process(context.Request);
+                        if (result.StatusCode == HttpStatusCode.OK)
+                        {
+                            context.Response.WriteResponse(result);
+                            return;
+                        }
+                        else
+                        {
+                            incorrectResults.Add(new Tuple<IRaspkateHandler, HandlerProcessResult>(handler, result));
+                        }
                     }
                     else
                     {
                         log.DebugFormat("Handler \"{0}\" cannot handle the request with URL \"{1}\", skipped.", handler, context.Request.Url);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     log.Warn(string.Format("Failed to check whether the current handler (Handler: \"{0}\") can handle the given request, skipping...", handler), ex);
                 }
             }
 
-            if (!handled)
+            if (incorrectResults.Count == 0)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.WriteResponse(HandlerProcessResult.Text(HttpStatusCode.BadRequest, "Invalid request."));
+            }
+            else if (incorrectResults.Count == 1)
+            {
+                context.Response.WriteResponse(incorrectResults[0].Item2);
+            }
+            else
+            {
+                var groupings = incorrectResults.GroupBy(x => x.Item2.StatusCode);
+                if (groupings.Count() == 1)
+                {
+                    context.Response.WriteResponse(groupings.First().Key, incorrectResults);
+                }
+                else
+                {
+                    context.Response.WriteResponse(HttpStatusCode.InternalServerError, incorrectResults);
+                }
             }
         }
 
@@ -230,22 +239,6 @@ namespace Raspkate
                 }
                 this.prefixesRegistered = true;
             }
-        }
-
-        internal void WriteResponse(HttpListenerResponse response, HttpStatusCode statusCode, object body)
-        {
-            response.StatusCode = (int)statusCode;
-            response.ContentEncoding = Encoding.UTF8;
-            var bodyJson = JsonConvert.SerializeObject(body);
-            var bytes = Encoding.UTF8.GetBytes(bodyJson);
-            response.ContentLength64 = bytes.LongLength;
-            response.ContentType = "application/json";
-            response.OutputStream.Write(bytes, 0, bytes.Length);
-        }
-
-        internal void WriteResponse(HttpListenerResponse response, Exception exception)
-        {
-            this.WriteResponse(response, HttpStatusCode.InternalServerError, exception);
         }
     }
 }

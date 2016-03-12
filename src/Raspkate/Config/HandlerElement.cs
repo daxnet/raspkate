@@ -17,7 +17,7 @@ namespace Raspkate.Config
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("{ \"Type\": \""+ this.Type + "\", \"Properties\": [");
+            sb.Append("{ \"Name\": \"" + this.Name + "\", \"Type\": \""+ this.Type + "\", \"Properties\": [");
             if (this.HandlerProperties.Count > 0)
             {
                 sb.Append(this.HandlerProperties);
