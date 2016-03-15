@@ -25,9 +25,14 @@
             <configurationElementCollectionMoniker name="/897cec43-7d1f-49a8-918f-751995129163/HandlerElementCollection" />
           </type>
         </elementProperty>
+        <elementProperty name="Provisioning" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="provisioning" isReadOnly="false">
+          <type>
+            <configurationElementMoniker name="/897cec43-7d1f-49a8-918f-751995129163/ProvisioningElement" />
+          </type>
+        </elementProperty>
       </elementProperties>
     </configurationSection>
-    <configurationElementCollection name="HandlerElementCollection" xmlItemName="handler" codeGenOptions="Indexer, AddMethod, RemoveMethod, GetItemMethods">
+    <configurationElementCollection name="HandlerElementCollection" collectionType="AddRemoveClearMapAlternate" xmlItemName="handler" codeGenOptions="Indexer, AddMethod, RemoveMethod, GetItemMethods">
       <itemType>
         <configurationElementMoniker name="/897cec43-7d1f-49a8-918f-751995129163/HandlerElement" />
       </itemType>
@@ -66,6 +71,20 @@
           </type>
         </attributeProperty>
         <attributeProperty name="Value" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="value" isReadOnly="false">
+          <type>
+            <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
+          </type>
+        </attributeProperty>
+      </attributeProperties>
+    </configurationElement>
+    <configurationElement name="ProvisioningElement">
+      <attributeProperties>
+        <attributeProperty name="Enabled" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="enabled" isReadOnly="false">
+          <type>
+            <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/Boolean" />
+          </type>
+        </attributeProperty>
+        <attributeProperty name="SearchPath" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="searchPath" isReadOnly="false">
           <type>
             <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
           </type>

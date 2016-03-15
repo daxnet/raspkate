@@ -131,6 +131,32 @@ namespace Raspkate.Config
             }
         }
         #endregion
+        
+        #region Provisioning Property
+        /// <summary>
+        /// The XML name of the <see cref="Provisioning"/> property.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
+        internal const string ProvisioningPropertyName = "provisioning";
+        
+        /// <summary>
+        /// Gets or sets the Provisioning.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
+        [global::System.ComponentModel.DescriptionAttribute("The Provisioning.")]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::Raspkate.Config.RaspkateConfiguration.ProvisioningPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
+        public virtual global::Raspkate.Config.ProvisioningElement Provisioning
+        {
+            get
+            {
+                return ((global::Raspkate.Config.ProvisioningElement)(base[global::Raspkate.Config.RaspkateConfiguration.ProvisioningPropertyName]));
+            }
+            set
+            {
+                base[global::Raspkate.Config.RaspkateConfiguration.ProvisioningPropertyName] = value;
+            }
+        }
+        #endregion
     }
 }
 namespace Raspkate.Config
@@ -140,7 +166,7 @@ namespace Raspkate.Config
     /// <summary>
     /// A collection of HandlerElement instances.
     /// </summary>
-    [global::System.Configuration.ConfigurationCollectionAttribute(typeof(global::Raspkate.Config.HandlerElement), CollectionType=global::System.Configuration.ConfigurationElementCollectionType.BasicMapAlternate, AddItemName=global::Raspkate.Config.HandlerElementCollection.HandlerElementPropertyName)]
+    [global::System.Configuration.ConfigurationCollectionAttribute(typeof(global::Raspkate.Config.HandlerElement), CollectionType=global::System.Configuration.ConfigurationElementCollectionType.AddRemoveClearMapAlternate, AddItemName="add", RemoveItemName="remove", ClearItemsName="clear")]
     public partial class HandlerElementCollection : global::System.Configuration.ConfigurationElementCollection
     {
         
@@ -162,7 +188,7 @@ namespace Raspkate.Config
         {
             get
             {
-                return global::System.Configuration.ConfigurationElementCollectionType.BasicMapAlternate;
+                return global::System.Configuration.ConfigurationElementCollectionType.AddRemoveClearMapAlternate;
             }
         }
         
@@ -642,6 +668,80 @@ namespace Raspkate.Config
             set
             {
                 base[global::Raspkate.Config.HandlerPropertyElement.ValuePropertyName] = value;
+            }
+        }
+        #endregion
+    }
+}
+namespace Raspkate.Config
+{
+    
+    
+    /// <summary>
+    /// The ProvisioningElement Configuration Element.
+    /// </summary>
+    public partial class ProvisioningElement : global::System.Configuration.ConfigurationElement
+    {
+        
+        #region IsReadOnly override
+        /// <summary>
+        /// Gets a value indicating whether the element is read-only.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+        #endregion
+        
+        #region Enabled Property
+        /// <summary>
+        /// The XML name of the <see cref="Enabled"/> property.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
+        internal const string EnabledPropertyName = "enabled";
+        
+        /// <summary>
+        /// Gets or sets the Enabled.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
+        [global::System.ComponentModel.DescriptionAttribute("The Enabled.")]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::Raspkate.Config.ProvisioningElement.EnabledPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
+        public virtual bool Enabled
+        {
+            get
+            {
+                return ((bool)(base[global::Raspkate.Config.ProvisioningElement.EnabledPropertyName]));
+            }
+            set
+            {
+                base[global::Raspkate.Config.ProvisioningElement.EnabledPropertyName] = value;
+            }
+        }
+        #endregion
+        
+        #region SearchPath Property
+        /// <summary>
+        /// The XML name of the <see cref="SearchPath"/> property.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
+        internal const string SearchPathPropertyName = "searchPath";
+        
+        /// <summary>
+        /// Gets or sets the SearchPath.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
+        [global::System.ComponentModel.DescriptionAttribute("The SearchPath.")]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::Raspkate.Config.ProvisioningElement.SearchPathPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false)]
+        public virtual string SearchPath
+        {
+            get
+            {
+                return ((string)(base[global::Raspkate.Config.ProvisioningElement.SearchPathPropertyName]));
+            }
+            set
+            {
+                base[global::Raspkate.Config.ProvisioningElement.SearchPathPropertyName] = value;
             }
         }
         #endregion

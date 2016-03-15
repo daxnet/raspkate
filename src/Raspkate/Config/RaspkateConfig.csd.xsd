@@ -16,6 +16,11 @@
 					<xs:documentation>The Handlers.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element minOccurs="0" name="provisioning" type="tns:Raspkate.Config.ProvisioningElementCT">
+				<xs:annotation>
+					<xs:documentation>The Provisioning.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:choice>
 		<xs:attribute name="prefix" use="required" type="xs:string">
 			<xs:annotation>
@@ -25,13 +30,23 @@
 	</xs:complexType>
 	<xs:complexType name="Raspkate.Config.HandlerElementCollectionCT">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="handler" type="tns:Raspkate.Config.HandlerElementCT">
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="clear" type="tns:Raspkate.Config.HandlerElementCollectionClearCT" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="remove" type="tns:Raspkate.Config.HandlerElementCollectionRemoveCT" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="add" type="tns:Raspkate.Config.HandlerElementCT">
 				<xs:annotation>
 					<xs:documentation>The HandlerElement Configuration Element.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:choice>
 	</xs:complexType>
+	<xs:complexType name="Raspkate.Config.HandlerElementCollectionRemoveCT">
+		<xs:attribute name="name" use="required" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The Name.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Raspkate.Config.HandlerElementCollectionClearCT" />
 	<xs:complexType name="Raspkate.Config.HandlerElementCT">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
 			<xs:element minOccurs="0" name="properties" type="tns:Raspkate.Config.HandlerPropertyElementCollectionCT">
@@ -69,6 +84,18 @@
 		<xs:attribute name="value" use="optional" type="xs:string">
 			<xs:annotation>
 				<xs:documentation>The Value.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Raspkate.Config.ProvisioningElementCT">
+		<xs:attribute name="enabled" use="optional" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>The Enabled.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="searchPath" use="optional" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The SearchPath.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 	</xs:complexType>

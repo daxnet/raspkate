@@ -37,9 +37,9 @@ namespace Raspkate
             return (from property in this.properties where property.Key == propertyName select property.Value).FirstOrDefault();
         }
 
-        protected internal virtual void OnRegistering() { }
+        public virtual void OnRegistering() { }
 
-        protected internal virtual void OnUnregistered() { }
+        public virtual void OnUnregistered() { }
 
         /// <summary>
         /// Checks if the incoming request can be processed by the current module.

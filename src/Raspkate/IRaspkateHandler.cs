@@ -49,5 +49,9 @@ namespace Raspkate
         /// <param name="request">The request to be processed by current handler.</param>
         /// <param name="response">The response which contains the returned data.</param>
         HandlerProcessResult Process(HttpListenerRequest request);
+
+        void OnRegistering();
+        void OnUnregistered();
+
     }
 }

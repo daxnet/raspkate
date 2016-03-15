@@ -96,6 +96,7 @@
     <Compile Include="RaspkateException.cs" />
     <Compile Include="RaspkateHandler.cs" />
     <Compile Include="Handlers\FileHandler.cs" />
+    <Compile Include="RaspkateModuleAttribute.cs" />
     <Compile Include="RaspkateServer.cs" />
     <Compile Include="Controllers\RouteAttribute.cs" />
     <Compile Include="Controllers\RoutePrefixAttribute.cs" />

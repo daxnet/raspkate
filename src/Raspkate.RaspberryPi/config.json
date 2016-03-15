@@ -1,0 +1,32 @@
+﻿{
+    "handlers": [
+        {
+            "name": "RaspberryPiStaticFileHandler",
+            "type": "Raspkate.Handlers.FileHandler, Raspkate",
+            "properties": [
+                {
+                    "name": "DefaultPages",
+                    "value": "index.htm;index.html"
+                },
+                {
+                    "name": "BasePath",
+                    "value": "prov\\RaspberryPi\\web"
+                },
+                {
+                    "name": "IsRelativePath",
+                    "value": "true"
+                }
+            ]
+        },
+        {
+            "name": "RaspberryPiWebAPIHandler",
+            "type": "Raspkate.Handlers.ControllerHandler, Raspkate",
+            "properties": [
+                {
+                    "name": "Controllers",
+                    "value": "Raspkate.RaspberryPi.RaspberryController, Raspkate.RaspberryPi"
+                }
+            ]
+        }
+    ]
+}

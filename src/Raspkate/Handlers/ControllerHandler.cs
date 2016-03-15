@@ -26,7 +26,7 @@ namespace Raspkate.Handlers
             : base(name, properties)
         { }
 
-        protected internal override void OnRegistering()
+        public override void OnRegistering()
         {
             var controllerTypeNames = GetPropertyValue("Controllers").Split(';').Select(p => p.Trim());
             foreach (var controllerTypeName in controllerTypeNames)
@@ -47,7 +47,7 @@ namespace Raspkate.Handlers
             }
         }
 
-        protected internal override void OnUnregistered()
+        public override void OnUnregistered()
         {
             foreach(var controller in synchronizedControllers.Values)
             {

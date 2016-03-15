@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 using Raspkate.Config;
 using System.Reflection;
 using Raspkate.Properties;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace Raspkate
 {
@@ -19,7 +21,7 @@ namespace Raspkate
         private volatile bool cancelled;
         private volatile bool prefixesRegistered;
         private readonly ManualResetEvent stopEvent = new ManualResetEvent(false);
-        private readonly List<RaspkateHandler> handlers = new List<RaspkateHandler>();
+        private readonly List<IRaspkateHandler> handlers = new List<IRaspkateHandler>();
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -43,6 +45,7 @@ namespace Raspkate
             log.Info(Resources.Logo);
             log.Info("Raspkate - A small and lightweight Web Server");
             log.Info(string.Format("[ Version: {0} ]", Version));
+            Provisioning(this.configuration);
             log.Info(string.Format("Starting Raspkate service with the configuration:{0}{1}", Environment.NewLine, this.configuration));
             this.RegisterPrefixes(new[] { configuration.Prefix });
             this.RegisterHandlers(configuration);
@@ -102,23 +105,74 @@ namespace Raspkate
                         }
                     }
 
-                    var handler = (RaspkateHandler)Activator.CreateInstance(handlerType, handlerElement.Name, properties);
-                    if (handler != null)
-                    {
-                        handler.OnRegistering();
-                        this.handlers.Add(handler);
-                        log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
-                    }
-                    else
-                    {
-                        log.WarnFormat("Register handler \"{0}\" failed, skipping...", handlerElement.Type);
-                    }
+                    this.RegisterHandler(handlerType, handlerElement.Name, properties);
                 }
                 catch(Exception ex)
                 {
                     log.Warn(string.Format("Failed to register handler \"{0}\", skipping...", handlerElement.Type), ex);
                 }
             }
+        }
+
+        private static void Provisioning(RaspkateConfiguration config)
+        {
+            if (config.Provisioning != null && config.Provisioning.Enabled && !string.IsNullOrEmpty(config.Provisioning.SearchPath))
+            {
+                var searchPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), config.Provisioning.SearchPath);
+                if (Directory.Exists(searchPath))
+                {
+                    foreach (var file in Directory.EnumerateFiles(searchPath, "*.dll", SearchOption.AllDirectories))
+                    {
+                        try
+                        {
+                            var assembly = Assembly.LoadFile(file);
+                            if (assembly != null && assembly.IsDefined(typeof(RaspkateModuleAttribute)))
+                            {
+                                var moduleAttribute = assembly.GetCustomAttribute<RaspkateModuleAttribute>();
+                                var fileName = Path.Combine(Path.GetDirectoryName(assembly.Location), moduleAttribute.Resource);
+                                dynamic settings = JsonConvert.DeserializeObject(File.ReadAllText(fileName));
+                                foreach (dynamic handlerSetting in settings.handlers)
+                                {
+                                    var handlerElement = new HandlerElement();
+                                    handlerElement.Name = (string)handlerSetting.name;
+                                    handlerElement.Type = (string)handlerSetting.type;
+                                    if (handlerSetting.properties != null && handlerSetting.properties.Count > 0)
+                                    {
+                                        foreach (dynamic handlerProperty in handlerSetting.properties)
+                                        {
+                                            var prop = new HandlerPropertyElement();
+                                            prop.Name = handlerProperty.name;
+                                            prop.Value = handlerProperty.value;
+                                            handlerElement.HandlerProperties.Add(prop);
+                                        }
+                                    }
+                                    config.Handlers.Add(handlerElement);
+                                }
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            log.Debug(string.Format("Cannot activate the file \"{0}\" as a .NET assembly when doing provisioning, skipping...", file), ex);
+                        }
+                    }
+                }
+            }
+        }
+
+        private IRaspkateHandler RegisterHandler(Type handlerType, string name, IEnumerable<KeyValuePair<string, string>> properties)
+        {
+            var handler = (IRaspkateHandler)Activator.CreateInstance(handlerType, name, properties);
+            if (handler != null)
+            {
+                handler.OnRegistering();
+                this.handlers.Add(handler);
+                log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
+            }
+            else
+            {
+                log.WarnFormat("Register handler of type \"{0}\" failed.", handlerType);
+            }
+            return handler;
         }
 
         private void UnregisterHandlers()
