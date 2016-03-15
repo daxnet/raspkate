@@ -34,6 +34,8 @@ namespace Raspkate
 
         protected string GetPropertyValue(string propertyName)
         {
+            if (this.properties == null)
+                return null;
             return (from property in this.properties where property.Key == propertyName select property.Value).FirstOrDefault();
         }
 

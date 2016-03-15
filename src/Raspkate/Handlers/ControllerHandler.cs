@@ -15,35 +15,56 @@ namespace Raspkate.Handlers
     /// <summary>
     /// Represents the handler that can handle RESTful API request and process the request by registered controllers.
     /// </summary>
-    internal sealed class ControllerHandler : RaspkateHandler
+    public sealed class ControllerHandler : RaspkateHandler
     {
+        private readonly List<Type> controllerTypes = new List<Type>();
         private readonly Regex fileNameRegularExpression = new Regex(FileHandler.Pattern);
         private readonly List<ControllerRegistration> controllerRegistrations = new List<ControllerRegistration>();
         private readonly Dictionary<string, RaspkateController> synchronizedControllers = new Dictionary<string, RaspkateController>();
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        [Obsolete("Calling this overrided constructor from code is not recommended. Use ctor(string, IEnumerable<Type>) override instead.")]
         public ControllerHandler(string name, IEnumerable<KeyValuePair<string, string>> properties)
             : base(name, properties)
         { }
 
+        public ControllerHandler(string name, IEnumerable<Type> types)
+            : base(name, null)
+        {
+            if (types != null)
+            {
+                var controllerTypes = from type in types
+                                      where type.IsSubclassOf(typeof(RaspkateController))
+                                      select type;
+                foreach(var controllerType in controllerTypes)
+                {
+                    this.RegisterControllerType(controllerType);
+                    log.InfoFormat("Controller type \"{0}\" registered successfully.", controllerType);
+                }
+            }
+        }
+
         public override void OnRegistering()
         {
-            var controllerTypeNames = GetPropertyValue("Controllers").Split(';').Select(p => p.Trim());
-            foreach (var controllerTypeName in controllerTypeNames)
+            if (this.GetPropertyValue("Controllers") != null)
             {
-                var controllerType = Type.GetType(controllerTypeName);
-                if (controllerType == null)
+                var controllerTypeNames = GetPropertyValue("Controllers").Split(';').Select(p => p.Trim());
+                foreach (var controllerTypeName in controllerTypeNames)
                 {
-                    log.WarnFormat("Cannot identify the controller type with the name \"{0}\", skipping...", controllerTypeName);
-                    continue;
+                    var controllerType = Type.GetType(controllerTypeName);
+                    if (controllerType == null)
+                    {
+                        log.WarnFormat("Cannot identify the controller type with the name \"{0}\", skipping...", controllerTypeName);
+                        continue;
+                    }
+                    if (!controllerType.IsSubclassOf(typeof(RaspkateController)))
+                    {
+                        log.WarnFormat("Type \"{0}\" is not a valid Raspkate controller, skipping...", controllerTypeName);
+                        continue;
+                    }
+                    this.RegisterControllerType(controllerType);
+                    log.InfoFormat("Controller type \"{0}\" registered successfully.", controllerTypeName);
                 }
-                if (!controllerType.IsSubclassOf(typeof(RaspkateController)))
-                {
-                    log.WarnFormat("Type \"{0}\" is not a valid Raspkate controller, skipping...", controllerTypeName);
-                    continue;
-                }
-                this.RegisterControllerType(controllerType);
-                log.InfoFormat("Controller type \"{0}\" registered successfully.", controllerTypeName);
             }
         }
 
@@ -162,7 +183,9 @@ namespace Raspkate.Handlers
                         }
                     }
                 }
-                throw new ControllerException("No registered controller can handle the request with route \"{0}\".", requestedUri);
+                //throw new ControllerException("No registered controller can handle the request with route \"{0}\".", requestedUri);
+                var message = string.Format("No controller registered to the ControllerHandler (\"{0}\") can handle the request with route \"{1}\".", this.Name, requestedUri);
+                return HandlerProcessResult.Text(HttpStatusCode.BadRequest, message);
             }
             catch (ControllerException ex)
             {

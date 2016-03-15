@@ -10,7 +10,7 @@ using Raspkate.Config;
 
 namespace Raspkate.Handlers
 {
-    internal sealed class FileHandler : RaspkateHandler
+    public sealed class FileHandler : RaspkateHandler
     {
         internal const string Pattern =
             @"^(?<fileName>/?(\w(\w|\-|\s)*/)*(\w|\-)+(\.(\w|\-)+)*\.\w+)(\?(?<queryString>\w+=(\w|\-)+(&\w+=(\w|\-)+)*))?$";

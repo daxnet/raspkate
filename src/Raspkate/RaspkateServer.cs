@@ -44,9 +44,8 @@ namespace Raspkate
         {
             log.Info(Resources.Logo);
             log.Info("Raspkate - A small and lightweight Web Server");
-            log.Info(string.Format("[ Version: {0} ]", Version));
-            Provisioning(this.configuration);
-            log.Info(string.Format("Starting Raspkate service with the configuration:{0}{1}", Environment.NewLine, this.configuration));
+            log.InfoFormat("[ Version: {0} ]", Version);
+            log.DebugFormat("Starting Raspkate service with the configuration:{0}{1}", Environment.NewLine, this.configuration);
             this.RegisterPrefixes(new[] { configuration.Prefix });
             this.RegisterHandlers(configuration);
             log.Debug("Starting HttpListener based on configuration.");
@@ -105,20 +104,36 @@ namespace Raspkate
                         }
                     }
 
-                    this.RegisterHandler(handlerType, handlerElement.Name, properties);
+                    var handler = (IRaspkateHandler)Activator.CreateInstance(handlerType, handlerElement.Name, properties);
+                    if (handler != null)
+                    {
+                        handler.OnRegistering();
+                        this.handlers.Add(handler);
+                        log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
+                    }
+                    else
+                    {
+                        log.WarnFormat("Register handler of type \"{0}\" failed.", handlerType);
+                    }
                 }
                 catch(Exception ex)
                 {
                     log.Warn(string.Format("Failed to register handler \"{0}\", skipping...", handlerElement.Type), ex);
                 }
             }
+
+            Provisioning(config);
         }
 
-        private static void Provisioning(RaspkateConfiguration config)
+        private void Provisioning(RaspkateConfiguration config)
         {
-            if (config.Provisioning != null && config.Provisioning.Enabled && !string.IsNullOrEmpty(config.Provisioning.SearchPath))
+            if (config.Provisioning != null &&
+                config.Provisioning.Enabled &&
+                !string.IsNullOrEmpty(config.Provisioning.SearchPath))
             {
+                log.Info("Provisioning enabled, start provisioning...");
                 var searchPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), config.Provisioning.SearchPath);
+                var count = 0;
                 if (Directory.Exists(searchPath))
                 {
                     foreach (var file in Directory.EnumerateFiles(searchPath, "*.dll", SearchOption.AllDirectories))
@@ -126,53 +141,47 @@ namespace Raspkate
                         try
                         {
                             var assembly = Assembly.LoadFile(file);
-                            if (assembly != null && assembly.IsDefined(typeof(RaspkateModuleAttribute)))
+                            var moduleTypes = from type in assembly.GetTypes()
+                                              where typeof(IRaspkateModule).IsAssignableFrom(type)
+                                              select type;
+                            foreach (var moduleType in moduleTypes)
                             {
-                                var moduleAttribute = assembly.GetCustomAttribute<RaspkateModuleAttribute>();
-                                var fileName = Path.Combine(Path.GetDirectoryName(assembly.Location), moduleAttribute.Resource);
-                                dynamic settings = JsonConvert.DeserializeObject(File.ReadAllText(fileName));
-                                foreach (dynamic handlerSetting in settings.handlers)
+                                var module = (IRaspkateModule)Activator.CreateInstance(moduleType);
+                                if (module != null && module.RegisteredHandlers != null)
                                 {
-                                    var handlerElement = new HandlerElement();
-                                    handlerElement.Name = (string)handlerSetting.name;
-                                    handlerElement.Type = (string)handlerSetting.type;
-                                    if (handlerSetting.properties != null && handlerSetting.properties.Count > 0)
+                                    foreach (var handler in module.RegisteredHandlers)
                                     {
-                                        foreach (dynamic handlerProperty in handlerSetting.properties)
-                                        {
-                                            var prop = new HandlerPropertyElement();
-                                            prop.Name = handlerProperty.name;
-                                            prop.Value = handlerProperty.value;
-                                            handlerElement.HandlerProperties.Add(prop);
-                                        }
+                                        handler.OnRegistering();
+                                        this.handlers.Add(handler);
+                                        count++;
+                                        log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
                                     }
-                                    config.Handlers.Add(handlerElement);
+                                }
+                                else
+                                {
+                                    log.WarnFormat("No registered handlers being provided by type \"{0}\", skipping...", moduleType);
                                 }
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            log.Debug(string.Format("Cannot activate the file \"{0}\" as a .NET assembly when doing provisioning, skipping...", file), ex);
+                            log.Debug(string.Format("Cannot load assembly from file \"{0}\".", file), ex);
                         }
                     }
                 }
+                else
+                {
+                    log.WarnFormat("Provisioning unsuccessful, the specified path ({0}) does not exist.", searchPath);
+                }
+                if (count == 0)
+                {
+                    log.Warn("No handler has been involved during provisioning.");
+                }
+                else
+                {
+                    log.InfoFormat("Total number of handlers being involved during provisioning: {0}.", count);
+                }
             }
-        }
-
-        private IRaspkateHandler RegisterHandler(Type handlerType, string name, IEnumerable<KeyValuePair<string, string>> properties)
-        {
-            var handler = (IRaspkateHandler)Activator.CreateInstance(handlerType, name, properties);
-            if (handler != null)
-            {
-                handler.OnRegistering();
-                this.handlers.Add(handler);
-                log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
-            }
-            else
-            {
-                log.WarnFormat("Register handler of type \"{0}\" failed.", handlerType);
-            }
-            return handler;
         }
 
         private void UnregisterHandlers()
