@@ -11,14 +11,9 @@
 	<xs:element name="raspkateConfiguration" type="tns:Raspkate.Config.RaspkateConfigurationCT" />
 	<xs:complexType name="Raspkate.Config.RaspkateConfigurationCT">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
-			<xs:element minOccurs="0" name="handlers" type="tns:Raspkate.Config.HandlerElementCollectionCT">
+			<xs:element minOccurs="1" name="modules" type="tns:Raspkate.Config.ModuleElementCollectionCT">
 				<xs:annotation>
-					<xs:documentation>The Handlers.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element minOccurs="0" name="provisioning" type="tns:Raspkate.Config.ProvisioningElementCT">
-				<xs:annotation>
-					<xs:documentation>The Provisioning.</xs:documentation>
+					<xs:documentation>The Modules.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:choice>
@@ -28,75 +23,35 @@
 			</xs:annotation>
 		</xs:attribute>
 	</xs:complexType>
-	<xs:complexType name="Raspkate.Config.HandlerElementCollectionCT">
+	<xs:complexType name="Raspkate.Config.ModuleElementCT">
+		<xs:attribute name="path" use="required" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The Path.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="relative" use="optional" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>The IsRelative.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Raspkate.Config.ModuleElementCollectionCT">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="clear" type="tns:Raspkate.Config.HandlerElementCollectionClearCT" />
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="remove" type="tns:Raspkate.Config.HandlerElementCollectionRemoveCT" />
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="add" type="tns:Raspkate.Config.HandlerElementCT">
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="clear" type="tns:Raspkate.Config.ModuleElementCollectionClearCT" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="remove" type="tns:Raspkate.Config.ModuleElementCollectionRemoveCT" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="add" type="tns:Raspkate.Config.ModuleElementCT">
 				<xs:annotation>
-					<xs:documentation>The HandlerElement Configuration Element.</xs:documentation>
+					<xs:documentation>The ModuleElement Configuration Element.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:choice>
 	</xs:complexType>
-	<xs:complexType name="Raspkate.Config.HandlerElementCollectionRemoveCT">
-		<xs:attribute name="name" use="required" type="xs:string">
+	<xs:complexType name="Raspkate.Config.ModuleElementCollectionRemoveCT">
+		<xs:attribute name="path" use="required" type="xs:string">
 			<xs:annotation>
-				<xs:documentation>The Name.</xs:documentation>
+				<xs:documentation>The Path.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 	</xs:complexType>
-	<xs:complexType name="Raspkate.Config.HandlerElementCollectionClearCT" />
-	<xs:complexType name="Raspkate.Config.HandlerElementCT">
-		<xs:choice minOccurs="0" maxOccurs="unbounded">
-			<xs:element minOccurs="0" name="properties" type="tns:Raspkate.Config.HandlerPropertyElementCollectionCT">
-				<xs:annotation>
-					<xs:documentation>The HandlerProperties.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:choice>
-		<xs:attribute name="type" use="required" type="xs:string">
-			<xs:annotation>
-				<xs:documentation>The Type.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="name" use="required" type="xs:string">
-			<xs:annotation>
-				<xs:documentation>The Name.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-	</xs:complexType>
-	<xs:complexType name="Raspkate.Config.HandlerPropertyElementCollectionCT">
-		<xs:choice minOccurs="0" maxOccurs="unbounded">
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="property" type="tns:Raspkate.Config.HandlerPropertyElementCT">
-				<xs:annotation>
-					<xs:documentation>The HandlerPropertyElement Configuration Element.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:choice>
-	</xs:complexType>
-	<xs:complexType name="Raspkate.Config.HandlerPropertyElementCT">
-		<xs:attribute name="name" use="required" type="xs:string">
-			<xs:annotation>
-				<xs:documentation>The Name.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="value" use="optional" type="xs:string">
-			<xs:annotation>
-				<xs:documentation>The Value.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-	</xs:complexType>
-	<xs:complexType name="Raspkate.Config.ProvisioningElementCT">
-		<xs:attribute name="enabled" use="optional" type="xs:boolean">
-			<xs:annotation>
-				<xs:documentation>The Enabled.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="searchPath" use="optional" type="xs:string">
-			<xs:annotation>
-				<xs:documentation>The SearchPath.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-	</xs:complexType>
+	<xs:complexType name="Raspkate.Config.ModuleElementCollectionClearCT" />
 </xs:schema>

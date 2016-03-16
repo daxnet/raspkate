@@ -8,17 +8,15 @@ namespace Raspkate
     public abstract class RaspkateHandler : IRaspkateHandler
     {
         private readonly string name;
-        private readonly IEnumerable<KeyValuePair<string, string>> properties;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Module"/> class.
         /// </summary>
         /// <param name="server">The <see cref="UnifiedSpaServer"/> instance on which the module
         /// is registered and executed.</param>
-        protected RaspkateHandler(string name, IEnumerable<KeyValuePair<string, string>> properties)
+        protected RaspkateHandler(string name)
         {
             this.name = name;
-            this.properties = properties;
         }
 
         /// <summary>
@@ -30,13 +28,6 @@ namespace Raspkate
         public string Name
         {
             get { return this.name; }
-        }
-
-        protected string GetPropertyValue(string propertyName)
-        {
-            if (this.properties == null)
-                return null;
-            return (from property in this.properties where property.Key == propertyName select property.Value).FirstOrDefault();
         }
 
         public virtual void OnRegistering() { }

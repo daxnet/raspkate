@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Raspkate.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Raspkate.Controllers
+namespace Raspkate.Modules
 {
     [RoutePrefix("api")]
     [Synchronized]

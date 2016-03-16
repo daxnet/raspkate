@@ -1,29 +1,46 @@
 ﻿using Raspkate.Handlers;
+using Raspkate.Modules;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Raspkate.RaspberryPi
 {
-    internal sealed class Module : IRaspkateModule
+    internal sealed class Module : RaspkateModule
     {
-        private static readonly Lazy<IEnumerable<IRaspkateHandler>> registeredHandlers = new Lazy<IEnumerable<IRaspkateHandler>>(() => new List<IRaspkateHandler> { 
-                    new FileHandler("RaspberryPiStaticFileHandler", new Dictionary<string, string> { 
-                        { "DefaultPages", "index.htm;index.html" },
-                        { "BasePath", @"prov\RaspberryPi\web" },
-                        { "IsRelativePath", "true" }
-                    }),
-                    new ControllerHandler("RaspberryPiWebAPIHandler", new [] { typeof(RaspberryController) } )
-                });
+        private readonly IDictionary<string, Assembly> dependencies = new Dictionary<string, Assembly>();
 
-        public IEnumerable<IRaspkateHandler> RegisteredHandlers
+        public Module(ModuleContext context)
+            : base(context)
         {
-            get
+            foreach(var file in Directory.EnumerateFiles(Context.ModuleFolder, "*.dll", SearchOption.TopDirectoryOnly))
             {
-                return registeredHandlers.Value;
+                try
+                {
+                    var dependency = Assembly.LoadFrom(file);
+                    this.dependencies.Add(dependency.FullName, dependency);
+                }
+                catch { }
             }
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+        }
+
+        Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            Assembly resolution;
+            dependencies.TryGetValue(args.Name, out resolution);
+            return resolution;
+        }
+
+        protected override IEnumerable<IRaspkateHandler> CreateHandlers()
+        {
+            yield return new FileHandler("Raspkate.RaspberryPi.Module.FileHandler", "index.htm;index.html", Path.Combine(Context.ModuleFolder, "web"));
+            yield return new ControllerHandler("Raspkate.RaspberryPi.Module.ControllerHandler", new[] { typeof(RaspberryController) });
         }
     }
+
 }

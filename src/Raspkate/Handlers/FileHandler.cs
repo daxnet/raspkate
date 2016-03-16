@@ -19,21 +19,14 @@ namespace Raspkate.Handlers
         private readonly ThreadLocal<string> requestedFileName = new ThreadLocal<string>(() => string.Empty);
         private readonly string configuredBasePath;
         private readonly string configuredDefaultPages;
-        private readonly bool isRelativePath;
 
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public FileHandler(string name, IEnumerable<KeyValuePair<string, string>> properties)
-            : base(name, properties)
+        public FileHandler(string name, string defaultPages, string basePath)
+            : base(name)
         {
-            configuredBasePath = this.GetPropertyValue("BasePath");
-            if (string.IsNullOrEmpty(configuredBasePath))
-            {
-                throw new ConfigurationException("No base path specified in the property configuration of FileHandler, the base path is specified in the <property> tag with the name of \"BasePath\".");
-            }
-            configuredDefaultPages = this.GetPropertyValue("DefaultPages");
-            var strRelativePathValue = this.GetPropertyValue("IsRelativePath");
-            bool.TryParse(strRelativePathValue, out isRelativePath);
+            this.configuredBasePath = basePath;
+            this.configuredDefaultPages = defaultPages;
         }
 
 
@@ -46,7 +39,7 @@ namespace Raspkate.Handlers
                     var defaultPageList = configuredDefaultPages.Split(';').Select(p => p.Trim());
                     foreach (var defaultPage in defaultPageList)
                     {
-                        var fullName = Path.Combine(this.BasePath, defaultPage);
+                        var fullName = Path.Combine(this.configuredBasePath, defaultPage);
                         if (File.Exists(fullName))
                         {
                             this.requestedFileName.Value = defaultPage;
@@ -70,7 +63,7 @@ namespace Raspkate.Handlers
         {
             try
             {
-                var fileNameRequested = Path.Combine(this.BasePath, this.requestedFileName.Value.Replace("/", Path.DirectorySeparatorChar.ToString()));
+                var fileNameRequested = Path.Combine(this.configuredBasePath, this.requestedFileName.Value.Replace("/", Path.DirectorySeparatorChar.ToString()));
                 log.DebugFormat("File requested: {0}", fileNameRequested);
                 if (!File.Exists(fileNameRequested))
                 {
@@ -87,18 +80,6 @@ namespace Raspkate.Handlers
             {
                 log.Error("Error occurred when processing the request.", ex);
                 return HandlerProcessResult.Exception(HttpStatusCode.InternalServerError, ex);
-            }
-        }
-
-        private string BasePath
-        {
-            get
-            {
-                if (this.isRelativePath)
-                {
-                    return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), this.configuredBasePath);
-                }
-                return this.configuredBasePath;
             }
         }
     }

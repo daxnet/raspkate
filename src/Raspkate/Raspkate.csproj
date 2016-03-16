@@ -57,18 +57,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\ConfigurationException.cs" />
-    <Compile Include="Config\HandlerElement.cs" />
-    <Compile Include="Config\HandlerElementCollection.cs" />
-    <Compile Include="Config\HandlerPropertyElement.cs" />
-    <Compile Include="Config\HandlerPropertyElementCollection.cs" />
     <Compile Include="Config\RaspkateConfig.csd.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>RaspkateConfig.csd</DependentUpon>
     </Compile>
-    <Compile Include="Config\RaspkateConfiguration.cs" />
     <Compile Include="Controllers\ControllerException.cs" />
-    <Compile Include="Controllers\DefaultRaspkateController.cs" />
     <Compile Include="Controllers\FromBodyAttribute.cs" />
     <Compile Include="Controllers\HttpGetAttribute.cs" />
     <Compile Include="Controllers\HttpMethodAttribute.cs" />
@@ -89,6 +83,8 @@
     <Compile Include="IRaspkateHandler.cs" />
     <Compile Include="IRaspkateModule.cs" />
     <Compile Include="IRaspkateServer.cs" />
+    <Compile Include="Modules\ModuleContext.cs" />
+    <Compile Include="Modules\RaspkateModule.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -129,6 +125,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

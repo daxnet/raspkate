@@ -10,6 +10,7 @@ using System.Reflection;
 using Raspkate.Properties;
 using System.IO;
 using System.Xml.Serialization;
+using Raspkate.Modules;
 
 namespace Raspkate
 {
@@ -83,103 +84,56 @@ namespace Raspkate
 
         private void RegisterHandlers(RaspkateConfiguration config)
         {
-            foreach(HandlerElement handlerElement in config.Handlers)
+            if (config.Modules != null && config.Modules.Count > 0)
             {
-                try
+                var entryAssemblyPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+                foreach(ModuleElement moduleElement in config.Modules)
                 {
-                    var handlerType = Type.GetType(handlerElement.Type);
-                    if (handlerType == null ||
-                        !handlerType.IsSubclassOf(typeof(RaspkateHandler)))
+                    var searchPath = moduleElement.IsRelative ?
+                        Path.Combine(entryAssemblyPath, moduleElement.Path) :
+                        moduleElement.Path;
+                    if (Directory.Exists(searchPath))
                     {
-                        log.WarnFormat("Cannot load CLR type from name \"{0}\", skipping...", handlerElement.Type);
-                        continue;
-                    }
-
-                    Dictionary<string, string> properties = new Dictionary<string, string>();
-                    if (handlerElement.HandlerProperties != null)
-                    {
-                        foreach (HandlerPropertyElement hpe in handlerElement.HandlerProperties)
+                        foreach (var moduleAssemblyFile in Directory.EnumerateFiles(searchPath, "*.dll", SearchOption.AllDirectories))
                         {
-                            properties.Add(hpe.Name, hpe.Value);
+                            try
+                            {
+                                var moduleAssembly = Assembly.LoadFile(moduleAssemblyFile);
+                                if (moduleAssembly != null)
+                                {
+                                    var moduleTypes = from type in moduleAssembly.GetTypes()
+                                                      where typeof(IRaspkateModule).IsAssignableFrom(type)
+                                                      select type;
+                                    foreach(var moduleType in moduleTypes)
+                                    {
+                                        var context = new ModuleContext(entryAssemblyPath, Path.GetDirectoryName(moduleAssemblyFile));
+                                        var module = (IRaspkateModule)Activator.CreateInstance(moduleType, context);
+                                        if (module != null && module.RegisteredHandlers != null)
+                                        {
+                                            foreach (var handler in module.RegisteredHandlers)
+                                            {
+                                                handler.OnRegistering();
+                                                this.handlers.Add(handler);
+                                                log.InfoFormat("Handler \"{0}\" registered successfully.", handler.Name);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            log.WarnFormat("No registered handlers being provided by type \"{0}\", skipping...", moduleType);
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Debug(string.Format("Unable to load assembly from file \"{0}\".", moduleAssemblyFile), ex);
+                            }
                         }
-                    }
-
-                    var handler = (IRaspkateHandler)Activator.CreateInstance(handlerType, handlerElement.Name, properties);
-                    if (handler != null)
-                    {
-                        handler.OnRegistering();
-                        this.handlers.Add(handler);
-                        log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
                     }
                     else
                     {
-                        log.WarnFormat("Register handler of type \"{0}\" failed.", handlerType);
+                        log.WarnFormat("Specified module path \"{0}\" does not exist.", searchPath);
                     }
-                }
-                catch(Exception ex)
-                {
-                    log.Warn(string.Format("Failed to register handler \"{0}\", skipping...", handlerElement.Type), ex);
-                }
-            }
-
-            Provisioning(config);
-        }
-
-        private void Provisioning(RaspkateConfiguration config)
-        {
-            if (config.Provisioning != null &&
-                config.Provisioning.Enabled &&
-                !string.IsNullOrEmpty(config.Provisioning.SearchPath))
-            {
-                log.Info("Provisioning enabled, start provisioning...");
-                var searchPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), config.Provisioning.SearchPath);
-                var count = 0;
-                if (Directory.Exists(searchPath))
-                {
-                    foreach (var file in Directory.EnumerateFiles(searchPath, "*.dll", SearchOption.AllDirectories))
-                    {
-                        try
-                        {
-                            var assembly = Assembly.LoadFile(file);
-                            var moduleTypes = from type in assembly.GetTypes()
-                                              where typeof(IRaspkateModule).IsAssignableFrom(type)
-                                              select type;
-                            foreach (var moduleType in moduleTypes)
-                            {
-                                var module = (IRaspkateModule)Activator.CreateInstance(moduleType);
-                                if (module != null && module.RegisteredHandlers != null)
-                                {
-                                    foreach (var handler in module.RegisteredHandlers)
-                                    {
-                                        handler.OnRegistering();
-                                        this.handlers.Add(handler);
-                                        count++;
-                                        log.InfoFormat("Handler \"{0}\" registered successfully.", handler);
-                                    }
-                                }
-                                else
-                                {
-                                    log.WarnFormat("No registered handlers being provided by type \"{0}\", skipping...", moduleType);
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            log.Debug(string.Format("Cannot load assembly from file \"{0}\".", file), ex);
-                        }
-                    }
-                }
-                else
-                {
-                    log.WarnFormat("Provisioning unsuccessful, the specified path ({0}) does not exist.", searchPath);
-                }
-                if (count == 0)
-                {
-                    log.Warn("No handler has been involved during provisioning.");
-                }
-                else
-                {
-                    log.InfoFormat("Total number of handlers being involved during provisioning: {0}.", count);
                 }
             }
         }

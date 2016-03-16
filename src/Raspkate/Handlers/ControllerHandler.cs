@@ -23,13 +23,8 @@ namespace Raspkate.Handlers
         private readonly Dictionary<string, RaspkateController> synchronizedControllers = new Dictionary<string, RaspkateController>();
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        [Obsolete("Calling this overrided constructor from code is not recommended. Use ctor(string, IEnumerable<Type>) override instead.")]
-        public ControllerHandler(string name, IEnumerable<KeyValuePair<string, string>> properties)
-            : base(name, properties)
-        { }
-
         public ControllerHandler(string name, IEnumerable<Type> types)
-            : base(name, null)
+            : base(name)
         {
             if (types != null)
             {
@@ -40,30 +35,6 @@ namespace Raspkate.Handlers
                 {
                     this.RegisterControllerType(controllerType);
                     log.InfoFormat("Controller type \"{0}\" registered successfully.", controllerType);
-                }
-            }
-        }
-
-        public override void OnRegistering()
-        {
-            if (this.GetPropertyValue("Controllers") != null)
-            {
-                var controllerTypeNames = GetPropertyValue("Controllers").Split(';').Select(p => p.Trim());
-                foreach (var controllerTypeName in controllerTypeNames)
-                {
-                    var controllerType = Type.GetType(controllerTypeName);
-                    if (controllerType == null)
-                    {
-                        log.WarnFormat("Cannot identify the controller type with the name \"{0}\", skipping...", controllerTypeName);
-                        continue;
-                    }
-                    if (!controllerType.IsSubclassOf(typeof(RaspkateController)))
-                    {
-                        log.WarnFormat("Type \"{0}\" is not a valid Raspkate controller, skipping...", controllerTypeName);
-                        continue;
-                    }
-                    this.RegisterControllerType(controllerType);
-                    log.InfoFormat("Controller type \"{0}\" registered successfully.", controllerTypeName);
                 }
             }
         }

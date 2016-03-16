@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Raspkate.Common")]
+[assembly: AssemblyTitle("Raspkate.Modules")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Raspkate.Common")]
-[assembly: AssemblyCopyright("Copyright © 2016 by daxnet.")]
+[assembly: AssemblyProduct("Raspkate.Modules")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,9 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0a9a4b24-675c-4054-94fd-4160d93d8380")]
-
-[assembly: log4net.Config.XmlConfigurator(Watch=true)]
+[assembly: Guid("59273cf5-6f6f-4cb4-a020-9f839e8be8b8")]
 
 // Version information for an assembly consists of the following four values:
 //

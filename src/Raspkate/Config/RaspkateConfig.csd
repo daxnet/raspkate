@@ -20,77 +20,32 @@
         </attributeProperty>
       </attributeProperties>
       <elementProperties>
-        <elementProperty name="Handlers" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="handlers" isReadOnly="false">
+        <elementProperty name="Modules" isRequired="true" isKey="false" isDefaultCollection="false" xmlName="modules" isReadOnly="false">
           <type>
-            <configurationElementCollectionMoniker name="/897cec43-7d1f-49a8-918f-751995129163/HandlerElementCollection" />
-          </type>
-        </elementProperty>
-        <elementProperty name="Provisioning" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="provisioning" isReadOnly="false">
-          <type>
-            <configurationElementMoniker name="/897cec43-7d1f-49a8-918f-751995129163/ProvisioningElement" />
+            <configurationElementCollectionMoniker name="/897cec43-7d1f-49a8-918f-751995129163/ModuleElementCollection" />
           </type>
         </elementProperty>
       </elementProperties>
     </configurationSection>
-    <configurationElementCollection name="HandlerElementCollection" collectionType="AddRemoveClearMapAlternate" xmlItemName="handler" codeGenOptions="Indexer, AddMethod, RemoveMethod, GetItemMethods">
-      <itemType>
-        <configurationElementMoniker name="/897cec43-7d1f-49a8-918f-751995129163/HandlerElement" />
-      </itemType>
-    </configurationElementCollection>
-    <configurationElement name="HandlerElement">
+    <configurationElement name="ModuleElement">
       <attributeProperties>
-        <attributeProperty name="Type" isRequired="true" isKey="false" isDefaultCollection="false" xmlName="type" isReadOnly="false">
+        <attributeProperty name="Path" isRequired="true" isKey="true" isDefaultCollection="false" xmlName="path" isReadOnly="false">
           <type>
             <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
           </type>
         </attributeProperty>
-        <attributeProperty name="Name" isRequired="true" isKey="true" isDefaultCollection="false" xmlName="name" isReadOnly="false">
-          <type>
-            <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
-          </type>
-        </attributeProperty>
-      </attributeProperties>
-      <elementProperties>
-        <elementProperty name="HandlerProperties" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="properties" isReadOnly="false">
-          <type>
-            <configurationElementCollectionMoniker name="/897cec43-7d1f-49a8-918f-751995129163/HandlerPropertyElementCollection" />
-          </type>
-        </elementProperty>
-      </elementProperties>
-    </configurationElement>
-    <configurationElementCollection name="HandlerPropertyElementCollection" xmlItemName="property" codeGenOptions="Indexer, AddMethod, RemoveMethod, GetItemMethods">
-      <itemType>
-        <configurationElementMoniker name="/897cec43-7d1f-49a8-918f-751995129163/HandlerPropertyElement" />
-      </itemType>
-    </configurationElementCollection>
-    <configurationElement name="HandlerPropertyElement">
-      <attributeProperties>
-        <attributeProperty name="Name" isRequired="true" isKey="true" isDefaultCollection="false" xmlName="name" isReadOnly="false">
-          <type>
-            <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
-          </type>
-        </attributeProperty>
-        <attributeProperty name="Value" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="value" isReadOnly="false">
-          <type>
-            <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
-          </type>
-        </attributeProperty>
-      </attributeProperties>
-    </configurationElement>
-    <configurationElement name="ProvisioningElement">
-      <attributeProperties>
-        <attributeProperty name="Enabled" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="enabled" isReadOnly="false">
+        <attributeProperty name="IsRelative" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="relative" isReadOnly="false" defaultValue="true">
           <type>
             <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/Boolean" />
           </type>
         </attributeProperty>
-        <attributeProperty name="SearchPath" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="searchPath" isReadOnly="false">
-          <type>
-            <externalTypeMoniker name="/897cec43-7d1f-49a8-918f-751995129163/String" />
-          </type>
-        </attributeProperty>
       </attributeProperties>
     </configurationElement>
+    <configurationElementCollection name="ModuleElementCollection" collectionType="AddRemoveClearMapAlternate" xmlItemName="module" codeGenOptions="Indexer, AddMethod, RemoveMethod, GetItemMethods">
+      <itemType>
+        <configurationElementMoniker name="/897cec43-7d1f-49a8-918f-751995129163/ModuleElement" />
+      </itemType>
+    </configurationElementCollection>
   </configurationElements>
   <propertyValidators>
     <validators />

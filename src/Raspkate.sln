@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raspkate.RaspberryPi", "Raspkate.RaspberryPi\Raspkate.RaspberryPi.csproj", "{7B1B80ED-D594-4908-8322-C3E76A05AF28}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raspkate.Modules", "Raspkate.Modules\Raspkate.Modules.csproj", "{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{7B1B80ED-D594-4908-8322-C3E76A05AF28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B1B80ED-D594-4908-8322-C3E76A05AF28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B1B80ED-D594-4908-8322-C3E76A05AF28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

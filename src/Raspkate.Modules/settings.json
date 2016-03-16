@@ -1,0 +1,16 @@
+﻿{
+    "settings": [
+        {
+            "key": "FileHandler.DefaultPages",
+            "value": "raspkate.html;index.htm;index.html"
+        },
+        {
+            "key": "FileHandler.BasePath",
+            "value": "web"
+        },
+        {
+            "key": "FileHandler.IsRelativePath",
+            "value": "true"
+        }
+    ]
+}
