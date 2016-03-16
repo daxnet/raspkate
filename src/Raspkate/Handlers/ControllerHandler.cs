@@ -17,7 +17,6 @@ namespace Raspkate.Handlers
     /// </summary>
     public sealed class ControllerHandler : RaspkateHandler
     {
-        private readonly List<Type> controllerTypes = new List<Type>();
         private readonly Regex fileNameRegularExpression = new Regex(FileHandler.Pattern);
         private readonly List<ControllerRegistration> controllerRegistrations = new List<ControllerRegistration>();
         private readonly Dictionary<string, RaspkateController> synchronizedControllers = new Dictionary<string, RaspkateController>();
