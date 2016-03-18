@@ -17,11 +17,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raspkate.Modules.RaspberryP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raspkate.Service", "Raspkate.Service\Raspkate.Service.csproj", "{1C2E4FD6-39B4-4762-B32C-E3079856A227}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raspkate.Tests", "Raspkate.Tests\Raspkate.Tests.csproj", "{F1021F48-B8C0-418C-95AC-8089A8814F7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		All|Any CPU = All|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Minimal|Any CPU = Minimal|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{38BB78EF-CFA0-457A-B216-5B3AFF7C5520}.All|Any CPU.ActiveCfg = Release|Any CPU
@@ -30,23 +33,39 @@ Global
 		{38BB78EF-CFA0-457A-B216-5B3AFF7C5520}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38BB78EF-CFA0-457A-B216-5B3AFF7C5520}.Minimal|Any CPU.ActiveCfg = Release|Any CPU
 		{38BB78EF-CFA0-457A-B216-5B3AFF7C5520}.Minimal|Any CPU.Build.0 = Release|Any CPU
+		{38BB78EF-CFA0-457A-B216-5B3AFF7C5520}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38BB78EF-CFA0-457A-B216-5B3AFF7C5520}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.All|Any CPU.ActiveCfg = Release|Any CPU
 		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.All|Any CPU.Build.0 = Release|Any CPU
 		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.Minimal|Any CPU.ActiveCfg = Release|Any CPU
 		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.Minimal|Any CPU.Build.0 = Release|Any CPU
+		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7B1B80ED-D594-4908-8322-C3E76A05AF28}.All|Any CPU.ActiveCfg = Release|Any CPU
 		{7B1B80ED-D594-4908-8322-C3E76A05AF28}.All|Any CPU.Build.0 = Release|Any CPU
 		{7B1B80ED-D594-4908-8322-C3E76A05AF28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7B1B80ED-D594-4908-8322-C3E76A05AF28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B1B80ED-D594-4908-8322-C3E76A05AF28}.Minimal|Any CPU.ActiveCfg = Release|Any CPU
+		{7B1B80ED-D594-4908-8322-C3E76A05AF28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B1B80ED-D594-4908-8322-C3E76A05AF28}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1C2E4FD6-39B4-4762-B32C-E3079856A227}.All|Any CPU.ActiveCfg = Release|Any CPU
 		{1C2E4FD6-39B4-4762-B32C-E3079856A227}.All|Any CPU.Build.0 = Release|Any CPU
 		{1C2E4FD6-39B4-4762-B32C-E3079856A227}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1C2E4FD6-39B4-4762-B32C-E3079856A227}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C2E4FD6-39B4-4762-B32C-E3079856A227}.Minimal|Any CPU.ActiveCfg = Release|Any CPU
 		{1C2E4FD6-39B4-4762-B32C-E3079856A227}.Minimal|Any CPU.Build.0 = Release|Any CPU
+		{1C2E4FD6-39B4-4762-B32C-E3079856A227}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C2E4FD6-39B4-4762-B32C-E3079856A227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.All|Any CPU.ActiveCfg = Release|Any CPU
+		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.All|Any CPU.Build.0 = Release|Any CPU
+		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Minimal|Any CPU.ActiveCfg = Release|Any CPU
+		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Minimal|Any CPU.Build.0 = Release|Any CPU
+		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
