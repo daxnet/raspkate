@@ -7,8 +7,8 @@
     <ProjectGuid>{3BF8382C-4FC9-482F-A4ED-B6EE4608DBF5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Raspkate.Modules</RootNamespace>
-    <AssemblyName>Raspkate.Modules</AssemblyName>
+    <RootNamespace>Raspkate.Modules.Default</RootNamespace>
+    <AssemblyName>Raspkate.Modules.Default</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\modules\default\</OutputPath>
+    <OutputPath>..\..\bin\modules\default\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\bin\Release\modules\default\</OutputPath>
+    <OutputPath>..\..\bin\modules\default\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

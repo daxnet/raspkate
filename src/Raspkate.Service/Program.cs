@@ -4,7 +4,7 @@ using Raspkate.Handlers;
 using Raspkate.Config;
 using System.Configuration;
 
-namespace Raspkate.ConsoleApp
+namespace Raspkate.Service
 {
     class Program
     {

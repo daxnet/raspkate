@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Raspkate.RaspberryPi
+namespace Raspkate.Modules.RaspberryPi
 {
     /// <summary>
     /// 

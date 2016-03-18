@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Raspkate.RaspberryPi
+namespace Raspkate.Modules.RaspberryPi
 {
     internal sealed class Module : RaspkateModule
     {
@@ -17,23 +17,7 @@ namespace Raspkate.RaspberryPi
         public Module(ModuleContext context)
             : base(context)
         {
-            foreach(var file in Directory.EnumerateFiles(Context.ModuleFolder, "*.dll", SearchOption.TopDirectoryOnly))
-            {
-                try
-                {
-                    var dependency = Assembly.LoadFrom(file);
-                    this.dependencies.Add(dependency.FullName, dependency);
-                }
-                catch { }
-            }
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-        }
-
-        Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            Assembly resolution;
-            dependencies.TryGetValue(args.Name, out resolution);
-            return resolution;
+            
         }
 
         protected override IEnumerable<IRaspkateHandler> CreateHandlers()
