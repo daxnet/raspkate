@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raspkate", "Raspkate\Raspkate.csproj", "{38BB78EF-CFA0-457A-B216-5B3AFF7C5520}"
 EndProject
@@ -59,11 +59,9 @@ Global
 		{1C2E4FD6-39B4-4762-B32C-E3079856A227}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C2E4FD6-39B4-4762-B32C-E3079856A227}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.All|Any CPU.ActiveCfg = Release|Any CPU
-		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.All|Any CPU.Build.0 = Release|Any CPU
 		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Minimal|Any CPU.ActiveCfg = Release|Any CPU
-		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Minimal|Any CPU.Build.0 = Release|Any CPU
 		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1021F48-B8C0-418C-95AC-8089A8814F7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

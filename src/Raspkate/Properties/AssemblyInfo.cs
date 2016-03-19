@@ -36,3 +36,8 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: InternalsVisibleTo("Raspkate.Tests, PublicKey=00240000048000009400000006020000002400005253413100040000010001005f2194c5fe8df0" +
+"05c981376c6e06c056885acb7c5036b730e93c4724509c45556ac7895282c06e8b21ad4a19296e" +
+"6ac90310c49a97a63017de0a068f52f8ea23bc68f4f9baceebf48205d3c64d487ce378a3d9077b" +
+"e876e2ce33e0ba91310ec927c63e3cd671de7f290b85050f694745fa7258e09ff8fa036eb78092" +
+"d94ed7b2")]

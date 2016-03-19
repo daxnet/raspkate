@@ -12,8 +12,6 @@ namespace Raspkate.Modules.RaspberryPi
 {
     internal sealed class Module : RaspkateModule
     {
-        private readonly IDictionary<string, Assembly> dependencies = new Dictionary<string, Assembly>();
-
         public Module(ModuleContext context)
             : base(context)
         {
