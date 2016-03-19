@@ -30,5 +30,16 @@ namespace Raspkate.Tests
             Assert.IsInstanceOf<LiteralRouteItem>(route[1]);
             Assert.IsInstanceOf<ParameterRouteItem>(route[2]);
         }
+
+        [Test]
+        public void ParseParameterRouteItemAtMiddlePositionTest()
+        {
+            var route = RouteParser.Parse("api/customers/{id}/orders");
+            Assert.AreEqual(4, route.Count);
+            Assert.IsInstanceOf<LiteralRouteItem>(route[0]);
+            Assert.IsInstanceOf<LiteralRouteItem>(route[1]);
+            Assert.IsInstanceOf<ParameterRouteItem>(route[2]);
+            Assert.IsInstanceOf<LiteralRouteItem>(route[3]);
+        }
     }
 }
