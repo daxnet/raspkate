@@ -58,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Module.cs" />
+    <Compile Include="PinDescription.cs" />
+    <Compile Include="PinType.cs" />
     <Compile Include="RaspberryController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

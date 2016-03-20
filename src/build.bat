@@ -1,6 +1,7 @@
 @ECHO OFF
 IF /I "%1"=="Debug" GOTO BuildDebug
-IF /I "%1"=="Release" GOTO BuildRelease
+IF /I "%1"=="All" GOTO BuildAll
+IF /I "%1"=="Minimal" GOTO BuildMinimal
 
 :ER
 ECHO.
@@ -19,8 +20,12 @@ GOTO End
 msbuild /p:Configuration="Debug";TargetFrameworkVersion="v4.5.2" Raspkate.sln
 GOTO End
 
-:BuildRelease
-msbuild /p:Configuration="Release";TargetFrameworkVersion="v4.5.2" Raspkate.sln
+:BuildAll
+msbuild /p:Configuration="All";TargetFrameworkVersion="v4.5.2" Raspkate.sln
+GOTO End
+
+:BuildMinimal
+msbuild /p:Configuration="Minimal";TargetFrameworkVersion="v4.5.2" Raspkate.sln
 GOTO End
 
 :End
