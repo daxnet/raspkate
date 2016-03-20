@@ -3,6 +3,7 @@ using Raspkate.Controllers;
 using Raspkate.Controllers.Routing;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -178,8 +179,20 @@ namespace Raspkate.Handlers
             }
             else
             {
-                var responseString = JsonConvert.SerializeObject(controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray()));
-                return HandlerProcessResult.Json(HttpStatusCode.OK, responseString);
+                var result = controllerRegistration.ControllerMethod.Invoke(controller, parameterValues.ToArray());
+                var httpStatusCodeProperty = result.GetType().GetProperty("HttpStatusCode");
+                var valueProperty = result.GetType().GetProperty("Value");
+                if (httpStatusCodeProperty != null && valueProperty != null)
+                {
+                    var httpStatusCode = (HttpStatusCode)httpStatusCodeProperty.GetValue(result);
+                    var valueObj = valueProperty.GetValue(result);
+                    return HandlerProcessResult.Json(httpStatusCode, JsonConvert.SerializeObject(valueObj));
+                }
+                else
+                {
+                    var responseString = JsonConvert.SerializeObject(result);
+                    return HandlerProcessResult.Json(HttpStatusCode.OK, responseString);
+                }
             }
         }
 

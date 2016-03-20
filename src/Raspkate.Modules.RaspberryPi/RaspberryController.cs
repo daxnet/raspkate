@@ -3,6 +3,7 @@ using Raspkate.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace Raspkate.Modules.RaspberryPi
     /// 
     /// </summary>
     [RoutePrefix("raspberry")]
+    [Synchronized]
     internal class RaspberryController : RaspkateController
     {
         private static readonly bool IsRaspberryPi = Raspberry.Board.Current.IsRaspberryPi;
@@ -97,7 +99,7 @@ namespace Raspkate.Modules.RaspberryPi
                     Pins = pins
                 };
             }
-            throw new InvalidOperationException();
+            return Error("The current device is not a Raspberry Pi...234234.");
         }
     }
 }

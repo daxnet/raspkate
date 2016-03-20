@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,5 +29,19 @@ namespace Raspkate.Controllers
         }
 
         protected virtual void Dispose(bool disposing) { }
+
+        protected dynamic Error(object value)
+        {
+            return Error(HttpStatusCode.InternalServerError, value);
+        }
+
+        protected dynamic Error(HttpStatusCode httpStatusCode, object value)
+        {
+            return new
+            {
+                HttpStatusCode = httpStatusCode,
+                Value = value
+            };
+        }
     }
 }
