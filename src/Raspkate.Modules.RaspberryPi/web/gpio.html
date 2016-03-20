@@ -8,49 +8,96 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE = edge">
     <meta name="viewport" content="width = device-width, initial-scale = 1">
-    <title>Raspkate Service Home Page</title>
+    <title>Raspkate Service Raspberry Pi Information Page</title>
     <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" />
     <script src="js/jquery-1.11.3.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script>
-        var state = false;
-        $(document).ready(function () {
-            $.ajax({
-                url: 'api/getPin/5',
-                type: 'GET',
-                success: function (data) {
-                    if (data) {
-                        $('#btn').addClass('btn-danger');
-                        $('#btn').text('ON');
-                    }
-                    else {
-                        $('#btn').removeClass('btn-danger');
-                        $('#btn').text('OFF');
-                    }
-                }
-            });
 
-            $('#btn').click(function () {
-                if ($('#btn').text() == 'ON') {
-                    $.post('api/setPin/5/false');
-                    $('#btn').removeClass('btn-danger');
-                    $('#btn').text('OFF');
-                } else {
-                    $.post('api/setPin/5/true');
-                    $('#btn').addClass('btn-danger');
-                    $('#btn').text('ON');
-                }
-            });
+    <script>
+    $(document).ready(function () {
+        $.ajax({
+            url: 'raspberry/board',
+            type: 'GET',
+            success: function (data) {
+                $.each(data, function (name, value) {
+                    var html = '<tr><td>' + name + '</td><td>' + value + '</td></tr>';
+                    $('#boardInfoTable tr:last').after(html);
+                });
+            }
         });
 
+        $.ajax({
+            url: 'raspberry/pins',
+            type: 'GET',
+            success: function (data) {
+                $.each(data.Pins, function (name, type, value) {
+                    var html = '<tr><td>' + name + '</td><td>' + type + '</td><td>' + value + '</td></tr>';
+                    $('#pinsInfoTable tr:last').after(html);
+                });
+            }
+        });
+    });
 
     </script>
+
+
 </head>
 <body>
-    <div class="container">
-        <h1>Raspberry Pi GPIO Testing</h1>
-        <hr />
-        <span class="text-primary">Current Status: </span><button id="btn" class="btn" type="button">Toggle</button>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a href="https://github.com/daxnet/raspkate" class="navbar-brand">Raspkate</a>
+            </div>
+        </div>
     </div>
+    <div class="jumbotron">
+        <div class="container">
+            <h1>My Raspberry Pi</h1>
+
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>
+                    Board Information
+                </h2>
+                <hr/>
+                <div class="table-responsive">
+                    <table id="boardInfoTable" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2>
+                    GPIO Pin Details
+                </h2>
+                <hr />
+                <div class="table-responsive">
+                    <table id="pinsInfoTable" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <hr />
+        <p class="text-center text-muted">Copyright &copy; 2016 daxnet.me.</p>
+    </footer>
 </body>
 </html>
