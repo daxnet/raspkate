@@ -99,25 +99,27 @@ namespace Raspkate.Handlers
                                     throw new ControllerException("Parameter \"{0}\" of method {1}.{2} has the FromBodyAttribute defined, which is not allowed in an HTTP GET method.", parameter.Name, controllerRegistration.ControllerType.Name, controllerRegistration.ControllerMethod.Name);
                                 }
                             }
-
-                            if (values.ContainsKey(parameter.Name))
+                            else
                             {
-                                var v = values[parameter.Name];
-                                if (v.GetType().Equals(parameter.ParameterType))
+                                if (values.ContainsKey(parameter.Name))
                                 {
-                                    parameterValues.Add(values[parameter.Name]);
+                                    var v = values[parameter.Name];
+                                    if (v.GetType().Equals(parameter.ParameterType))
+                                    {
+                                        parameterValues.Add(values[parameter.Name]);
+                                    }
+                                    else
+                                    {
+                                        parameterValues.Add(Convert.ChangeType(v, parameter.ParameterType));
+                                    }
                                 }
                                 else
                                 {
-                                    parameterValues.Add(Convert.ChangeType(v, parameter.ParameterType));
+                                    throw new ControllerException("Parameter binding failed: Unrecognized parameter \"{0}\" defined in the controller method {1}.{2}.",
+                                        parameter.Name,
+                                        controllerRegistration.ControllerType.Name,
+                                        controllerRegistration.ControllerMethod.Name);
                                 }
-                            }
-                            else
-                            {
-                                throw new ControllerException("Parameter binding failed: Unrecognized parameter \"{0}\" defined in the controller method {1}.{2}.",
-                                    parameter.Name,
-                                    controllerRegistration.ControllerType.Name,
-                                    controllerRegistration.ControllerMethod.Name);
                             }
                         }
 
